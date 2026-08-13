@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- fond rond : donne du contraste dans l'onglet, clair comme sombre -->
+  <circle cx="32" cy="32" r="32" fill="#1F3864"/>
+
+  <!-- halo doux derriere le personnage -->
+  <circle cx="32" cy="30" r="21" fill="#2C4A7C"/>
+
+  <!-- epaules / robe -->
+  <path d="M16 60 Q16 44 32 44 Q48 44 48 60 Z" fill="#16294D"/>
+  <path d="M27 45 Q32 47 37 45 L38 60 L26 60 Z" fill="#101F3C"/>
+
+  <!-- capuche, derriere le visage -->
+  <path d="M15 32 Q14 13 32 12 Q50 13 49 32 Q49 22 32 21 Q15 22 15 32 Z" fill="#DADEE3"/>
+  <path d="M15 30 Q13 39 17 46" fill="none" stroke="#DADEE3" stroke-width="6" stroke-linecap="round"/>
+  <path d="M49 30 Q51 39 47 46" fill="none" stroke="#DADEE3" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- visage -->
+  <circle cx="32" cy="31" r="15" fill="#F0C49A"/>
+
+  <!-- lunettes : le trait le plus reconnaissable du personnage -->
+  <circle cx="26" cy="31" r="5.4" fill="none" stroke="#B08D57" stroke-width="2.2"/>
+  <circle cx="38" cy="31" r="5.4" fill="none" stroke="#B08D57" stroke-width="2.2"/>
+  <line x1="31.4" y1="31" x2="32.6" y2="31" stroke="#B08D57" stroke-width="2.2"/>
+  <line x1="20.6" y1="30" x2="18" y2="29" stroke="#B08D57" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="43.4" y1="30" x2="46" y2="29" stroke="#B08D57" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="26" cy="31" r="1.5" fill="#3A2A1E"/>
+  <circle cx="38" cy="31" r="1.5" fill="#3A2A1E"/>
+
+  <!-- barbe blanche -->
+  <path d="M17 38 Q18 48 32 51 Q46 48 47 38 Q40 45 32 45 Q24 45 17 38 Z" fill="#DADEE3"/>
+
+  <!-- etincelle doree : rappelle l'univers du projet -->
+  <path d="M52 12 l1.8 4.4 4.4 1.8 -4.4 1.8 -1.8 4.4 -1.8 -4.4 -4.4 -1.8 4.4 -1.8 z" fill="#B08D57"/>
+</svg>
