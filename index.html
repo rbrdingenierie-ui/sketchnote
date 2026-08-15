@@ -1,0 +1,3438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="https://rbrdingenierie-ui.github.io/accueil_outils/favicon.svg">
+<link rel="apple-touch-icon" href="https://rbrdingenierie-ui.github.io/accueil_outils/favicon.svg">
+<title>Mon sketchnote</title>
+<style>
+  :root {
+    --navy: #1F3864;
+    --navy-soft: #4A5C82;
+    --gold: #B08D57;
+    --teal: #168F7F;
+    --teal-soft: #E3F3F1;
+    --orange: #E0591F;
+    --bg: #F7F8FA;
+    --white: #FFFFFF;
+    --track: #8592B0;
+    --a11y-scale: 1;
+  }
+  /* liens des references bibliographiques : zone tactile conforme (24px minimum) */
+  li a[href^="http"], li a[target="_blank"] {
+    display:inline-block; min-height:24px; line-height:1.7; padding:3px 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; background: var(--bg); font-family: Arial, Helvetica, sans-serif; color: var(--navy); }
+  body { display:flex; justify-content:center; padding: 32px 16px 60px; }
+  .page { width:100%; max-width: 1000px; }
+
+  header { text-align:center; margin-bottom: 20px; }
+  header h1 { font-size: calc(clamp(24px, 5vw, 30px) * var(--a11y-scale)); margin: 0 0 8px 0; }
+  header p { font-size: calc(15px * var(--a11y-scale)); color: var(--navy-soft); margin:0; max-width: 620px; margin-left:auto; margin-right:auto; line-height:1.5; }
+
+  .a11y-bar {
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center;
+    background:var(--white); border:2px solid var(--navy-soft); border-radius:12px;
+    padding:10px 16px; margin-bottom:18px; font-size:13px;
+  }
+  /* une fois que l'apprenant descend dans la page, la barre reste accessible en haut.
+     Version compacte : elle ne doit pas manger l'ecran, surtout sur telephone. */
+  .a11y-bar.figee {
+    position:fixed; top:8px; left:50%; transform:translateX(-50%);
+    width:calc(100% - 20px); max-width:860px; z-index:1400;
+    padding:8px 12px; gap:7px; margin-bottom:0;
+    box-shadow:0 4px 18px rgba(31,56,100,0.18);
+  }
+  .a11y-bar.figee .a11y-toggle-btn { font-size:12px; padding:6px 11px; }
+  .a11y-bar.figee .a11y-bar-label { font-size:12px; }
+  .a11y-bar.figee .a11y-size-group { font-size:12px; }
+  .a11y-bar.figee .a11y-size-group button { width:30px; height:30px; font-size:13px; }
+
+  /* sur telephone, l'ecran est etroit : on reduit encore pour laisser voir le contenu */
+  @media (max-width: 620px) {
+    .a11y-bar.figee { padding:6px 8px; gap:5px; top:5px; }
+    .a11y-bar.figee .a11y-toggle-btn { font-size:11px; padding:5px 9px; }
+    .a11y-bar.figee .a11y-bar-label { font-size:11px; }
+    .a11y-bar.figee .a11y-size-group { font-size:11px; gap:4px; }
+    .a11y-bar.figee .a11y-size-group button { width:28px; height:28px; font-size:12px; }
+  }
+  /* remplace la barre dans le flux, pour que le contenu ne remonte pas d'un coup */
+  .a11y-bar-espace { display:none; }
+  .a11y-bar-espace.actif { display:block; }
+  .a11y-bar-label { font-weight:800; color:var(--navy); margin-right:2px; }
+  .a11y-toggle-btn {
+    font-family:inherit; font-size:13px; font-weight:700; color:var(--navy);
+    background:var(--white); border:2px solid var(--navy-soft); border-radius:999px;
+    padding:7px 14px; cursor:pointer;
+  }
+  .a11y-toggle-btn:hover { border-color:var(--navy); }
+  .a11y-toggle-btn[aria-pressed="true"] { background:var(--navy); border-color:var(--navy); color:#FFFFFF; }
+  .a11y-size-group { display:flex; align-items:center; gap:6px; }
+  .a11y-size-group span { font-weight:700; color:var(--navy-soft); }
+  .a11y-size-group button {
+    font-family:inherit; font-weight:800; font-size:14px; color:var(--navy);
+    background:var(--white); border:2px solid var(--navy-soft); border-radius:8px;
+    width:34px; height:34px; cursor:pointer;
+  }
+  .a11y-size-group button:hover { border-color:var(--navy); }
+
+  /* ---------- confort de lecture (police adaptee) ---------- */
+  body.a11y-font { font-family: Verdana, Geneva, sans-serif; }
+  body.a11y-font .lede, body.a11y-font .info-card p, body.a11y-font .how-step, body.a11y-font header p {
+    letter-spacing:0.01em; line-height:1.75;
+  }
+
+  /* ---------- contraste renforce ---------- */
+  body.a11y-contrast .tab-btn, body.a11y-contrast .subtoolbar, body.a11y-contrast .board-wrap,
+  body.a11y-contrast .info-card, body.a11y-contrast .how-step, body.a11y-contrast .icon-swatch,
+  body.a11y-contrast .emoji-swatch, body.a11y-contrast .brush-btn, body.a11y-contrast .tb-mini-btn,
+  body.a11y-contrast .a11y-bar {
+    border-width:3px !important; border-color:var(--navy) !important;
+  }
+  body.a11y-contrast .swatch, body.a11y-contrast .swatch-custom { box-shadow:0 0 0 3px var(--navy) !important; }
+  body.a11y-contrast .lede, body.a11y-contrast .info-card p, body.a11y-contrast .how-step, body.a11y-contrast header p,
+  body.a11y-contrast .tab-btn, body.a11y-contrast .tab-btn.active { color:#000000 !important; }
+  body.a11y-contrast .tab-btn.active { color:#FFFFFF !important; }
+
+  /* ---------- mode FALC (Facile a Lire et a Comprendre) ---------- */
+  .falc-simple-content { display:none; }
+  body.falc-mode .falc-normal-content { display:none; }
+  body.falc-mode .falc-simple-content { display:block; }
+  .falc-simple-content .lede,
+  .falc-simple-content .info-card p,
+  .falc-simple-content .how-step {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: calc(16px * var(--a11y-scale));
+    line-height: 2;
+    color:#000000;
+  }
+  .falc-simple-content .info-card h2, .falc-simple-content .info-card h3 { font-size: calc(17px * var(--a11y-scale)); }
+  .falc-simple-content .how-step strong { text-decoration: underline; text-underline-offset: 3px; }
+
+  a:focus-visible, button:focus-visible, input:focus-visible, .placed-el:focus-visible {
+    outline: 3px solid var(--navy) !important;
+    outline-offset: 2px;
+  }
+
+  .skip-link {
+    position:absolute; left:-9999px; top:0; z-index:1000;
+    background:var(--navy); color:#FFFFFF; font-family:inherit; font-weight:700; font-size:14px;
+    padding:12px 20px; border-radius:0 0 10px 0; text-decoration:none;
+  }
+  .skip-link:focus { left:0; }
+
+  .back-to-hub {
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:14px; font-weight:700; color:var(--navy);
+    background:#FFFFFF; border:2px solid var(--track); border-radius:999px;
+    padding:10px 18px; text-decoration:none; margin-bottom:16px; min-height:24px;
+  }
+  .back-to-hub:hover { border-color:var(--navy-soft); }
+  body.a11y-contrast .back-to-hub { border-color:#000000; color:#000000; }
+
+  .tabs { display:flex; justify-content:center; gap:10px; margin-bottom: 24px; flex-wrap:wrap; }
+  .tab-btn {
+    font-family:inherit; font-size:calc(13.5px * var(--a11y-scale)); font-weight:700; color: var(--navy-soft);
+    background: var(--white); border:2px solid var(--track); border-radius:999px;
+    padding: 9px 18px; cursor:pointer;
+  }
+  .tab-btn:hover { border-color: var(--navy-soft); }
+  .tab-btn.active { background: var(--navy); border-color: var(--navy); color:#FFFFFF; }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+
+  .panel-title { font-size: calc(22px * var(--a11y-scale)); font-weight:800; color: var(--navy); margin: 0 0 14px 0; }
+  .lede { font-size:calc(15px * var(--a11y-scale)); line-height:1.6; color:#3A4560; }
+
+  .info-card {
+    background: var(--white); border:2px solid var(--track); border-radius:16px;
+    padding: 18px 20px; margin-bottom: 14px;
+  }
+  .info-card h2, .info-card h3 { font-size:calc(15.5px * var(--a11y-scale)); color: var(--navy); margin: 0 0 8px 0; }
+  .info-card p { font-size:calc(14px * var(--a11y-scale)); line-height:1.6; color:#4A5568; margin:0; }
+
+  .how-steps { display:flex; flex-direction:column; gap:12px; margin-bottom: 8px; }
+  .how-step {
+    display:flex; align-items:flex-start; gap:14px;
+    background: var(--white); border:2px solid var(--track); border-radius:14px; padding:14px 16px;
+    font-size:calc(14px * var(--a11y-scale)); line-height:1.55; color:#3A4560;
+  }
+  .how-num {
+    flex-shrink:0; width:32px; height:32px; border-radius:50%; color:#FFFFFF;
+    display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px;
+  }
+  .how-step strong { color: var(--navy); }
+
+  .tab-cta { text-align:center; margin: 22px 0 8px; }
+  .tb-btn { min-height: 44px; }
+  .tab-cta .tb-btn { padding: 13px 22px; font-size:14.5px; }
+
+  .sources-block { text-align:center; font-size:12px; color: var(--navy-soft); margin-top: 24px; }
+  .sources-title { font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color: var(--navy-soft); margin-bottom:8px; }
+  .sources-block ul { list-style:none; padding:0; margin: 0; }
+  .sources-block li { font-size:12px; margin-bottom:4px; }
+  .sources-block a { color: var(--navy-soft); }
+
+  .history-toggle {
+    display:block; width:100%; text-align:center; font-family:inherit; font-size:13.5px; font-weight:700;
+    color: var(--navy-soft); background:none; border:none; cursor:pointer; margin-bottom: 14px;
+    text-decoration: underline; text-underline-offset: 3px;
+    padding: 12px 8px; min-height: 44px;
+  }
+  .history-toggle:hover { color: var(--navy); }
+  .history-panel {
+    background: var(--white); border: 2px solid var(--track); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 22px; display:none;
+  }
+  .history-panel.open { display:block; }
+  .history-empty { font-size:13.5px; color: var(--navy-soft); font-style:italic; text-align:center; padding: 6px; }
+  .history-item { display:flex; align-items:center; justify-content:space-between; padding: 10px 8px; border-radius:10px; cursor:pointer; }
+  .history-item:hover { background: var(--bg); }
+  .history-item + .history-item { border-top: 1px solid var(--track); }
+  .history-item .hi-main { flex:1; min-width:0; }
+  .history-item .hi-title { font-size:14px; font-weight:700; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .history-item .hi-sub { font-size:12px; color:var(--navy-soft); }
+  .history-item .hi-del { background:none; border:none; color:#B7BEC9; font-size:16px; cursor:pointer; padding:4px 8px; flex-shrink:0; }
+  .history-item .hi-del:hover { color:#C0392B; }
+
+  .meta-row { display:flex; margin-bottom: 14px; }
+  .meta-row .meta-field:first-child { margin-right: 12px; }
+  .meta-field {
+    flex:1; font-family: inherit; font-size: 16px; font-weight:700; color: var(--navy);
+    border: none; border-bottom: 2px solid var(--track); background: transparent;
+    padding: 10px 4px; text-align:center; min-width: 0;
+  }
+  .meta-field:focus { outline:none; border-bottom-color: var(--navy); }
+  .meta-field::placeholder { color:#A9B2C3; font-weight:400; font-style:italic; }
+  .meta-field-solo {
+    display:block; width:100%; font-family: inherit; font-size: 15px; font-weight:700; color: var(--navy);
+    border: none; border-bottom: 2px solid var(--track); background: transparent;
+    padding: 10px 4px; text-align:center; margin-bottom: 16px;
+  }
+  .meta-field-solo:focus { outline:none; border-bottom-color: var(--navy); }
+  .meta-field-solo::placeholder { color:#A9B2C3; font-weight:400; font-style:italic; }
+
+  @media (max-width: 480px) {
+    .meta-row { flex-direction: column; }
+    .meta-row .meta-field { margin-bottom: 12px; }
+    .meta-row .meta-field:first-child { margin-right: 0; }
+  }
+
+  .titre-row input {
+    width:100%; font-family:inherit; font-size:20px; font-weight:800; color:var(--navy);
+    border:2px solid var(--track); border-radius:14px; padding:14px 16px; margin-bottom:8px;
+    text-align:center;
+  }
+  .titre-row input:focus { outline:none; border-color: var(--navy-soft); }
+  .titre-row input::placeholder { color:#B7BEC9; font-weight:700; }
+  .titre-style-toggle {
+    font-family:inherit; font-size:12.5px; font-weight:700; color:var(--navy-soft);
+    background:var(--white); border:2px solid var(--track); border-radius:999px;
+    padding:6px 14px; cursor:pointer; display:block; margin:0 auto 14px;
+  }
+  .titre-style-toggle:hover { border-color:var(--navy-soft); }
+  .titre-style-toggle[aria-expanded="true"] { background:var(--navy); border-color:var(--navy); color:#FFFFFF; }
+  .titre-style-panel {
+    background:var(--white); border:2px solid var(--track); border-radius:14px;
+    padding:12px 14px; margin: -6px 0 14px; display:flex; flex-direction:column; gap:10px;
+  }
+  .titre-style-panel[hidden] { display:none; }
+  .titre-style-panel .text-hint { margin-top:-2px; }
+
+  .shape-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .shape-btn {
+    font-family:inherit; font-size:12.5px; font-weight:700; color:var(--navy-soft);
+    background:var(--white); border:2px solid var(--track); border-radius:999px; padding:8px 14px; cursor:pointer;
+  }
+  .shape-btn:hover { border-color: var(--navy-soft); }
+  .shape-btn.selected { background: var(--navy); border-color:var(--navy); color:#FFFFFF; }
+  .font-btn { font-size:13.5px; padding:8px 14px; }
+
+  /* ---------- barre d'outils creation ---------- */
+  .mode-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .mode-btn {
+    font-family:inherit; font-size:13px; font-weight:700; color:var(--navy-soft);
+    background:var(--white); border:2px solid var(--track); border-radius:12px; padding:10px 16px; cursor:pointer;
+  }
+  .mode-btn:hover { border-color: var(--navy-soft); }
+  .mode-btn.active { background: var(--navy); border-color:var(--navy); color:#FFFFFF; }
+
+  .subtoolbar {
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    background: var(--white); border:2px solid var(--track); border-radius:14px; padding:10px 14px; margin-bottom:10px;
+    min-height:52px;
+  }
+  .list-view-panel {
+    background: var(--white); border:2px solid var(--track); border-radius:14px;
+    padding: 16px 20px; margin-bottom: 16px;
+  }
+  .list-view-panel[hidden] { display:none; }
+  .list-view-panel ol { margin:6px 0 0 0; padding-left:22px; }
+  .list-view-panel li { margin:8px 0; font-size:14px; color:var(--navy); }
+  .list-view-panel .lv-note { font-style:italic; color:var(--navy-soft); font-size:13px; margin-top:4px; }
+  .list-view-panel .lv-empty { font-style:italic; color:var(--navy-soft); font-size:13.5px; }
+  .swatch-row { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .swatch {
+    width:26px; height:26px; border-radius:50%; border:2px solid var(--white); box-shadow:0 0 0 2px var(--track);
+    cursor:pointer; padding:0;
+  }
+  .swatch.selected { box-shadow:0 0 0 2px var(--navy); }
+  .custom-color-wrap {
+    display:inline-flex; align-items:center; gap:7px; padding:4px 12px 4px 4px;
+    border:2px dashed var(--navy-soft); border-radius:999px; cursor:pointer; position:relative;
+  }
+  .custom-color-wrap.selected { border-style:solid; border-color:var(--navy); background:var(--teal-soft); }
+  .custom-color-wrap span.cc-label { font-size:12.5px; font-weight:700; color:var(--navy-soft); white-space:nowrap; }
+  .swatch-custom {
+    width:26px; height:26px; border-radius:50%; border:2px solid var(--white); box-shadow:0 0 0 2px var(--track);
+    cursor:pointer; padding:0; -webkit-appearance:none; appearance:none; background:none; flex-shrink:0;
+  }
+  .swatch-custom::-webkit-color-swatch-wrapper { padding:0; border-radius:50%; }
+  .swatch-custom::-webkit-color-swatch { border:none; border-radius:50%; }
+  .swatch-custom::-moz-color-swatch { border:none; border-radius:50%; }
+  .custom-color-wrap .cc-plus {
+    position:absolute; left:4px; top:50%; transform:translateY(-50%); width:26px; height:26px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; color:#FFFFFF; font-size:15px; font-weight:800;
+    pointer-events:none; text-shadow:0 1px 2px rgba(0,0,0,0.35);
+  }
+  .brush-row { display:flex; align-items:center; gap:8px; }
+  .brush-row span { font-size:12.5px; color:var(--navy-soft); font-weight:700; }
+  .brush-btn {
+    width:30px; height:30px; border-radius:50%; border:2px solid var(--track); background:var(--white); cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .brush-btn.selected { border-color:var(--navy); background:var(--teal-soft); }
+  .brush-btn .dot { border-radius:50%; background:var(--navy); }
+  .tb-mini-btn {
+    font-family:inherit; font-size:12.5px; font-weight:700; color:var(--navy-soft);
+    background:var(--white); border:2px solid var(--track); border-radius:10px; padding:8px 12px; cursor:pointer;
+  }
+  .tb-mini-btn:hover { border-color:#C0392B; color:#C0392B; }
+
+  .icon-bank { display:flex; gap:8px; flex-wrap:wrap; }
+  .icon-swatch {
+    width:38px; height:38px; border-radius:10px; border:2px solid var(--track); background:var(--white);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; padding:6px;
+  }
+  .icon-swatch:hover { border-color: var(--navy-soft); }
+  .icon-swatch.selected { border-color: var(--navy); background: var(--teal-soft); }
+  .icon-swatch svg { width:100%; height:100%; }
+  .sub-toggle { display:flex; gap:6px; width:100%; margin-bottom:2px; }
+  .sub-toggle button {
+    font-family:inherit; font-size:12.5px; font-weight:700; color:var(--navy-soft);
+    background:var(--bg); border:2px solid var(--track); border-radius:10px; padding:6px 12px; cursor:pointer;
+  }
+  .sub-toggle button.active { background:var(--navy); border-color:var(--navy); color:#FFFFFF; }
+  .emoji-bank { display:flex; gap:6px; flex-wrap:wrap; }
+  .emoji-swatch {
+    width:38px; height:38px; border-radius:10px; border:2px solid var(--track); background:var(--white);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:21px; line-height:1; padding:0;
+  }
+  .emoji-swatch:hover { border-color: var(--navy-soft); }
+  .emoji-swatch.selected { border-color: var(--navy); background: var(--teal-soft); }
+
+  .text-hint { font-size:12.5px; color:var(--navy-soft); font-style:italic; }
+  .guide-print-toggle {
+    display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:var(--navy-soft); cursor:pointer;
+  }
+  .guide-print-toggle input { width:15px; height:15px; accent-color:var(--navy); cursor:pointer; margin:0; }
+
+  /* ---------- zone de creation ---------- */
+  .board-wrap {
+    position:relative; background: var(--white); border:2px solid var(--track); border-radius:16px;
+    overflow:hidden; margin-bottom: 14px; touch-action:none;
+    aspect-ratio: 1000 / 620;
+  }
+  .board-wrap canvas { position:absolute; top:0; left:0; display:block; width:100%; height:100%; }
+  #guideCanvas { pointer-events:none; }
+  #previewCanvas { pointer-events:none; }
+  .board-overlay { position:absolute; top:0; left:0; width:100%; height:100%; }
+
+  .placed-el {
+    position:absolute; cursor:grab; user-select:none; touch-action:none;
+  }
+  .placed-el.dragging { cursor:grabbing; z-index:50; }
+  .placed-el .del-x {
+    position:absolute; top:-11px; right:-11px; width:24px; height:24px; border-radius:50%;
+    background:#C0392B; color:#FFFFFF; font-size:12px; line-height:24px; text-align:center;
+    cursor:pointer; font-weight:800; box-shadow:0 1px 3px rgba(0,0,0,0.25);
+  }
+  .placed-el.icon-el svg { width:44px; height:44px; pointer-events:none; }
+  .placed-el.emoji-el { font-size:36px; line-height:1; }
+  .resize-handle, .rotate-handle {
+    position:absolute; width:24px; height:24px; border-radius:50%;
+    background:var(--white); border:2px solid var(--navy-soft); font-size:12px; line-height:20px; text-align:center;
+    cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.2); color:var(--navy-soft); touch-action:none;
+  }
+  .resize-handle { bottom:-12px; right:-12px; cursor:nwse-resize; }
+  .rotate-handle { top:-30px; left:50%; transform:translateX(-50%); cursor:grab; }
+  .rotate-handle:active { cursor:grabbing; }
+  .placed-el.image-el img { display:block; width:100%; height:100%; object-fit:contain; border-radius:8px; pointer-events:none; }
+  .placed-el.text-el { font-weight:800; font-size:17px; white-space:nowrap; padding:4px 26px 4px 8px; border-radius:8px; pointer-events:auto; background:rgba(255,255,255,0.85); }
+  .placed-el.text-el .edit-pencil {
+    position:absolute; top:50%; right:-32px; transform:translateY(-50%); width:24px; height:24px; border-radius:50%;
+    background:var(--white); border:2px solid var(--track); font-size:12px; line-height:20px; text-align:center;
+    cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.15);
+  }
+  .placed-el.text-el .del-x { top:-11px; right:-32px; }
+  .placed-el.text-el input {
+    font: inherit; font-weight:800; color:inherit; background:transparent; border:none; outline:none;
+    width:auto; min-width:40px;
+  }
+  .placed-el.link-el {
+    font-weight:700; font-size:14px; color:var(--navy); white-space:nowrap; max-width:220px;
+    overflow:hidden; text-overflow:ellipsis; padding:7px 10px; border-radius:20px; pointer-events:auto;
+    background:rgba(255,255,255,0.92); border:2px solid var(--track); display:inline-block;
+  }
+  .placed-el.link-el .link-open {
+    position:absolute; top:50%; right:-32px; transform:translateY(-50%); width:24px; height:24px; border-radius:50%;
+    background:var(--white); border:2px solid var(--track); font-size:13px; line-height:20px; text-align:center;
+    cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.15); color:var(--navy); text-decoration:none;
+  }
+  .placed-el.link-el .del-x { top:-11px; right:-32px; }
+  .placed-el.audio-el {
+    background:rgba(255,255,255,0.95); border:2px solid var(--track); border-radius:12px; padding:6px 8px;
+    width:230px; pointer-events:auto;
+  }
+  .placed-el.audio-el .audio-handle {
+    font-size:11px; font-weight:700; color:var(--navy-soft); margin-bottom:4px; cursor:grab;
+  }
+  .placed-el.audio-el audio { width:100%; height:32px; display:block; }
+
+  .save-indicator {
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(12px);
+    background:#E4F3EA; color:#277649; border:2px solid #277649;
+    border-radius:999px; padding:9px 20px; font-size:13.5px; font-weight:700;
+    opacity:0; pointer-events:none; transition:opacity 0.25s ease, transform 0.25s ease; z-index:1500;
+  }
+  .save-indicator.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  .save-indicator.save-error { background:#FBE5E2; color:#C0392B; border-color:#C0392B; }
+  @media (prefers-reduced-motion: reduce) { .save-indicator { transition:none; } }
+
+  .actions { display:flex; margin-bottom: 8px; gap:12px; flex-wrap:wrap; }
+  .actions > * { flex: 1 1 150px; }
+  .btn-undo {
+    font-family:inherit; font-size:14px; font-weight:700; color:var(--navy-soft);
+    background:var(--white); border:2px solid var(--track); border-radius:12px; padding:12px; cursor:pointer;
+  }
+  .btn-undo:hover:not(:disabled) { border-color:var(--navy-soft); color:var(--navy); }
+  .btn-undo:disabled { opacity:0.45; cursor:default; }
+  .btn-danger {
+    font-family:inherit; font-size:14px; font-weight:700; color:#A9412F;
+    background:#FBEAE7; border:2px solid #F0C9C0; border-radius:12px; padding:12px; cursor:pointer;
+  }
+  .btn-danger:hover { border-color:#C0392B; background:#F8DBD5; }
+  .btn-safe {
+    font-family:inherit; font-size:14px; font-weight:700; color:#0F6E56;
+    background:var(--teal-soft); border:2px solid #BCE4DB; border-radius:12px; padding:12px; cursor:pointer;
+  }
+  .btn-safe:hover { border-color:var(--teal); }
+  .btn-print {
+    font-family:inherit; font-size:14px; font-weight:700; color:var(--white);
+    background:var(--navy); border:none; border-radius:12px; padding:12px; cursor:pointer;
+  }
+  .btn-print:hover { filter:brightness(1.15); }
+
+  footer { text-align:center; font-size:12px; color:var(--navy-soft); margin-top: 20px; }
+
+  @media print {
+    .tabs, .mode-row, .subtoolbar, .actions, .history-toggle, .history-panel, .save-indicator, header p, .a11y-bar, .titre-style-toggle, .titre-style-panel, #listViewToggle, .list-view-panel, .skip-link { display:none !important; }
+    #panel-pourquoi, #panel-comment { display:none !important; }
+    #panel-concevoir { display:block !important; }
+    .board-wrap { border:none; }
+    .placed-el .del-x, .placed-el .edit-pencil, .placed-el .link-open, .resize-handle, .rotate-handle { display:none !important; }
+    .audio-el audio { display:none !important; }
+    body.hide-guide-print #guideCanvas { display:none !important; }
+    * { outline: none !important; }
+  }
+</style>
+</head>
+<body>
+<!-- Les habitants de Mnemosia, partages par les pages d'outils.
+     A inclure juste apres <body> : les symboles sont invisibles,
+     seul le popup d'accueil les affiche. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+<symbol id="habitantA" viewBox="0 0 120 160">
+  <!-- exploratrice en combinaison claire -->
+  <defs>
+    <linearGradient id="combiA" x1="0%" y1="0%" x2="100%" y2="8%">
+      <stop offset="0%" stop-color="#FFFDF6"/><stop offset="34%" stop-color="#EDE4D2"/>
+      <stop offset="72%" stop-color="#C6B99E"/><stop offset="100%" stop-color="#8E836C"/>
+    </linearGradient>
+    <radialGradient id="peauA" cx="34%" cy="28%" r="72%">
+      <stop offset="0%" stop-color="#FFE0C2"/><stop offset="52%" stop-color="#F0C49A"/>
+      <stop offset="100%" stop-color="#C08B65"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="63" cy="153" rx="30" ry="6" fill="#5A431F" opacity="0.32"/>
+  <ellipse cx="60" cy="151" rx="22" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <path d="M38 152 L36 96 Q36 78 60 78 Q84 78 84 96 L82 152 Z" fill="url(#combiA)" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M60 78 Q36 78 36 96 L38 152 L60 152 Z" fill="#FFFDF6" opacity="0.35"/>
+  <path d="M74 84 Q84 92 84 96 L82 152 L72 152 Z" fill="#7E7360" opacity="0.4"/>
+  <path d="M46 82 L46 118 L74 118 L74 82 Q60 88 46 82 Z" fill="#DCD2BE" stroke="#12161E" stroke-width="1.1"/>
+  <rect x="44" y="118" width="32" height="9" rx="3" fill="#8A6A3A" stroke="#12161E" stroke-width="1.2"/>
+  <rect x="55" y="117" width="11" height="11" rx="2" fill="#C9A96E" stroke="#12161E" stroke-width="0.9"/>
+  <path d="M42 130 L54 130 L54 152 L42 152 Z" fill="#6E5A42" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M66 130 L78 130 L78 152 L66 152 Z" fill="#6E5A42" stroke="#12161E" stroke-width="1.1"/>
+  <rect x="42" y="129" width="12" height="4" rx="1.5" fill="#4A3A28"/>
+  <rect x="66" y="129" width="12" height="4" rx="1.5" fill="#4A3A28"/>
+  <path d="M60 20 Q40 20 39 44 Q38 58 46 64 L74 64 Q82 58 81 44 Q80 20 60 20 Z" fill="#E5DBC6" stroke="#12161E" stroke-width="1.5"/>
+  <path d="M60 20 Q40 20 39 44 L44 44 Q45 26 60 26 Z" fill="#FFFDF6" opacity="0.5"/>
+  <ellipse cx="60" cy="48" rx="15" ry="17" fill="url(#peauA)" stroke="#12161E" stroke-width="1.4"/>
+  <circle cx="54" cy="46" r="2.4" fill="#2A1A12"/>
+  <circle cx="53.4" cy="45.2" r="0.9" fill="#FFFFFF"/>
+  <circle cx="66" cy="46" r="2.4" fill="#2A1A12"/>
+  <circle cx="65.4" cy="45.2" r="0.9" fill="#FFFFFF"/>
+  <path d="M49 41 Q54 38 58 40" stroke="#8A6642" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M62 40 Q66 38 71 41" stroke="#8A6642" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M55 55 Q60 58 65 55" stroke="#B08560" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <ellipse cx="47" cy="52" rx="3.5" ry="2.5" fill="#E8A088" opacity="0.4"/>
+  <ellipse cx="73" cy="52" rx="3.5" ry="2.5" fill="#E8A088" opacity="0.4"/>
+  <path d="M78 84 L86 90 L84 152 L78 152 Z" fill="#8E836C" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M74 118 L82 122 L82 128 L74 126 Z" fill="#6E5432" stroke="#12161E" stroke-width="0.9"/>
+  <path d="M54 130 L58 134 L58 152 L54 152 Z" fill="#4A3A28" opacity="0.7"/>
+  <path d="M78 130 L82 134 L82 152 L78 152 Z" fill="#4A3A28" opacity="0.7"/>
+  <ellipse cx="60" cy="64" rx="13" ry="4" fill="#C6B99E" opacity="0.5"/>
+  <path d="M46 40 Q52 36 58 38" stroke="#C0A88A" stroke-width="1.2" fill="none" opacity="0.5"/>
+  <path d="M60 54 L58 58 Q60 60 62 58 Z" fill="#D9A57A" opacity="0.65"/>
+  <ellipse cx="52" cy="44" rx="3.6" ry="2" fill="#FFFFFF" opacity="0.28"/>
+  <ellipse cx="68" cy="44" rx="3.6" ry="2" fill="#FFFFFF" opacity="0.28"/>
+  <path d="M45 48 Q43 51 45 54" stroke="#D9A57A" stroke-width="1.4" fill="none" opacity="0.5"/>
+  <path d="M75 48 Q77 51 75 54" stroke="#C08B65" stroke-width="1.4" fill="none" opacity="0.5"/>
+  <!-- modele du visage : lumiere haut-gauche, ombre bas-droite -->
+  <ellipse cx="54" cy="44" rx="5.5" ry="6" fill="#FFE0C2" opacity="0.22"/>
+  <ellipse cx="68" cy="52" rx="5.5" ry="6" fill="#C08B65" opacity="0.22"/>
+  <!-- arete du nez -->
+  <path d="M60 46 L59 53" stroke="#FFE0C2" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+  <path d="M61 46 L62 53" stroke="#8A6642" stroke-width="1.1" opacity="0.35" stroke-linecap="round"/>
+  <!-- narines -->
+  <ellipse cx="57.5" cy="55" rx="1.3" ry="0.9" fill="#8A6642" opacity="0.5"/>
+  <ellipse cx="62.5" cy="55" rx="1.3" ry="0.9" fill="#8A6642" opacity="0.5"/>
+  <!-- levres -->
+  <path d="M55 60 Q60 63 65 60" stroke="#8A6642" stroke-width="1.6" fill="none" opacity="0.62" stroke-linecap="round"/>
+  <path d="M56 59 Q60 61 64 59" stroke="#E8A088" stroke-width="1.2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <!-- menton -->
+  <path d="M56 64 Q60 66 64 64" stroke="#C08B65" stroke-width="1.2" fill="none" opacity="0.32"/>
+  <!-- paupieres -->
+  <path d="M50 45 Q54 43 58 45" stroke="#8A6642" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <path d="M62 45 Q66 43 70 45" stroke="#8A6642" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <!-- oreilles -->
+  <ellipse cx="43" cy="49" rx="3.2" ry="4.6" fill="#FFE0C2" stroke="#8A6642" stroke-width="0.9" opacity="0.85"/>
+  <ellipse cx="77" cy="49" rx="3.2" ry="4.6" fill="#C08B65" stroke="#8A6642" stroke-width="0.9" opacity="0.85"/>
+  <path d="M43 47 Q44 49 43 51" stroke="#8A6642" stroke-width="0.8" fill="none" opacity="0.4"/>
+</symbol>
+<symbol id="habitantB" viewBox="0 0 120 160">
+  <!-- pilote en tenue sombre, harnais croise -->
+  <defs>
+    <linearGradient id="combiB" x1="0%" y1="0%" x2="100%" y2="8%">
+      <stop offset="0%" stop-color="#6E7E9E"/><stop offset="34%" stop-color="#54627F"/>
+      <stop offset="72%" stop-color="#3A4660"/><stop offset="100%" stop-color="#232C40"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="63" cy="153" rx="30" ry="6" fill="#5A431F" opacity="0.32"/>
+  <ellipse cx="60" cy="151" rx="22" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <path d="M38 152 L36 94 Q36 76 60 76 Q84 76 84 94 L82 152 Z" fill="url(#combiB)" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M60 76 Q36 76 36 94 L38 152 L60 152 Z" fill="#7E8EAE" opacity="0.3"/>
+  <path d="M46 80 L60 96 L74 80" stroke="#C9A96E" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <circle cx="60" cy="98" r="4.5" fill="#C9A96E" stroke="#12161E" stroke-width="1"/>
+  <rect x="44" y="112" width="32" height="9" rx="3" fill="#1E2634" stroke="#12161E" stroke-width="1.2"/>
+  <rect x="55" y="111" width="11" height="11" rx="2" fill="#8592B0" stroke="#12161E" stroke-width="0.9"/>
+  <rect x="46" y="122" width="7" height="12" rx="2" fill="#8592B0" stroke="#12161E" stroke-width="0.9"/>
+  <path d="M42 132 L54 132 L54 152 L42 152 Z" fill="#2A3244" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M66 132 L78 132 L78 152 L66 152 Z" fill="#2A3244" stroke="#12161E" stroke-width="1.1"/>
+  <ellipse cx="60" cy="48" rx="16" ry="18" fill="url(#peauA)" stroke="#12161E" stroke-width="1.4"/>
+  <path d="M43 44 Q46 24 60 24 Q74 24 77 44 Q70 32 60 32 Q50 32 43 44 Z" fill="#4A3A28" stroke="#12161E" stroke-width="1.2"/>
+  <path d="M43 44 Q46 24 60 24 L60 32 Q50 32 43 44 Z" fill="#6E5A42" opacity="0.5"/>
+  <circle cx="54" cy="48" r="2.4" fill="#2A1A12"/>
+  <circle cx="53.4" cy="47.2" r="0.9" fill="#FFFFFF"/>
+  <circle cx="66" cy="48" r="2.4" fill="#2A1A12"/>
+  <circle cx="65.4" cy="47.2" r="0.9" fill="#FFFFFF"/>
+  <path d="M49 42 Q54 39 58 41" stroke="#3A2A1C" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M62 41 Q66 39 71 42" stroke="#3A2A1C" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M55 57 Q60 60 65 57" stroke="#C08B65" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M78 82 L86 88 L84 152 L78 152 Z" fill="#232C40" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M76 112 L84 116 L84 122 L76 120 Z" fill="#141A26" stroke="#12161E" stroke-width="0.9"/>
+  <path d="M54 132 L58 136 L58 152 L54 152 Z" fill="#1A2030" opacity="0.75"/>
+  <path d="M78 132 L82 136 L82 152 L78 152 Z" fill="#1A2030" opacity="0.75"/>
+  <ellipse cx="60" cy="66" rx="14" ry="4" fill="#3A4660" opacity="0.55"/>
+  <path d="M50 54 Q60 58 70 54" stroke="#8E9AB8" stroke-width="1.2" fill="none" opacity="0.4"/>
+  <path d="M60 56 L58 60 Q60 62 62 60 Z" fill="#D9A57A" opacity="0.65"/>
+  <ellipse cx="47" cy="54" rx="3.4" ry="2.4" fill="#E8A088" opacity="0.35"/>
+  <ellipse cx="73" cy="54" rx="3.4" ry="2.4" fill="#E8A088" opacity="0.35"/>
+  <path d="M45 50 Q43 53 45 56" stroke="#D9A57A" stroke-width="1.4" fill="none" opacity="0.5"/>
+  <path d="M75 50 Q77 53 75 56" stroke="#C08B65" stroke-width="1.4" fill="none" opacity="0.5"/>
+  <!-- modele du visage : lumiere haut-gauche, ombre bas-droite -->
+  <ellipse cx="54" cy="44" rx="5.5" ry="6" fill="#FFE0C2" opacity="0.22"/>
+  <ellipse cx="68" cy="52" rx="5.5" ry="6" fill="#C08B65" opacity="0.22"/>
+  <!-- arete du nez -->
+  <path d="M60 46 L59 53" stroke="#FFE0C2" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+  <path d="M61 46 L62 53" stroke="#8A6642" stroke-width="1.1" opacity="0.35" stroke-linecap="round"/>
+  <!-- narines -->
+  <ellipse cx="57.5" cy="55" rx="1.3" ry="0.9" fill="#8A6642" opacity="0.5"/>
+  <ellipse cx="62.5" cy="55" rx="1.3" ry="0.9" fill="#8A6642" opacity="0.5"/>
+  <!-- levres -->
+  <path d="M55 60 Q60 63 65 60" stroke="#8A6642" stroke-width="1.6" fill="none" opacity="0.62" stroke-linecap="round"/>
+  <path d="M56 59 Q60 61 64 59" stroke="#E8A088" stroke-width="1.2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <!-- menton -->
+  <path d="M56 64 Q60 66 64 64" stroke="#C08B65" stroke-width="1.2" fill="none" opacity="0.32"/>
+  <!-- paupieres -->
+  <path d="M50 45 Q54 43 58 45" stroke="#8A6642" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <path d="M62 45 Q66 43 70 45" stroke="#8A6642" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <!-- oreilles -->
+  <ellipse cx="43" cy="49" rx="3.2" ry="4.6" fill="#FFE0C2" stroke="#8A6642" stroke-width="0.9" opacity="0.85"/>
+  <ellipse cx="77" cy="49" rx="3.2" ry="4.6" fill="#C08B65" stroke="#8A6642" stroke-width="0.9" opacity="0.85"/>
+  <path d="M43 47 Q44 49 43 51" stroke="#8A6642" stroke-width="0.8" fill="none" opacity="0.4"/>
+</symbol>
+<symbol id="habitantC" viewBox="0 0 120 160">
+  <!-- droide de service, dome et roulettes -->
+  <defs>
+    <linearGradient id="corpsC" x1="0%" y1="0%" x2="100%" y2="6%">
+      <stop offset="0%" stop-color="#EDF2F8"/><stop offset="32%" stop-color="#D6DEE8"/>
+      <stop offset="70%" stop-color="#A8B4C4"/><stop offset="100%" stop-color="#78849A"/>
+    </linearGradient>
+    <radialGradient id="domeC" cx="32%" cy="24%" r="76%">
+      <stop offset="0%" stop-color="#FFFFFF"/><stop offset="46%" stop-color="#E3EAF2"/>
+      <stop offset="100%" stop-color="#8E9AAC"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="63" cy="153" rx="27" ry="6" fill="#5A431F" opacity="0.32"/>
+  <ellipse cx="60" cy="151" rx="20" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <path d="M40 148 Q36 110 44 92 L76 92 Q84 110 80 148 Q80 152 74 152 L46 152 Q40 152 40 148 Z" fill="url(#corpsC)" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M40 148 Q36 110 44 92 L60 92 L60 152 L46 152 Q40 152 40 148 Z" fill="#FFFFFF" opacity="0.4"/>
+  <rect x="47" y="102" width="26" height="18" rx="3" fill="#2C3A50" stroke="#12161E" stroke-width="1.2"/>
+  <circle cx="55" cy="111" r="3.5" fill="#3FCBAA"/>
+  <circle cx="54.2" cy="110" r="1.2" fill="#DFFFF6"/>
+  <circle cx="66" cy="111" r="3.5" fill="#E0591F"/>
+  <circle cx="65.2" cy="110" r="1.2" fill="#FFE0CC"/>
+  <rect x="45" y="126" width="30" height="6" rx="2.5" fill="#8592B0" stroke="#12161E" stroke-width="1"/>
+  <rect x="45" y="136" width="30" height="6" rx="2.5" fill="#8592B0" stroke="#12161E" stroke-width="1"/>
+  <path d="M42 92 Q42 60 60 60 Q78 60 78 92 Z" fill="url(#domeC)" stroke="#12161E" stroke-width="1.6"/>
+  <ellipse cx="52" cy="72" rx="9" ry="6" fill="#FFFFFF" opacity="0.65" transform="rotate(-24 52 72)"/>
+  <circle cx="60" cy="76" r="10" fill="#1E2A38" stroke="#12161E" stroke-width="1.4"/>
+  <circle cx="57" cy="73" r="4" fill="#8FD9F0"/>
+  <circle cx="55.6" cy="71.6" r="1.6" fill="#FFFFFF"/>
+  <rect x="58" y="44" width="4" height="18" rx="2" fill="#8592B0" stroke="#12161E" stroke-width="0.9"/>
+  <circle cx="60" cy="42" r="4" fill="#C0392B" stroke="#12161E" stroke-width="1"/>
+  <circle cx="59" cy="41" r="1.4" fill="#FFD0CA"/>
+  <circle cx="47" cy="146" r="5" fill="#3A4660" stroke="#12161E" stroke-width="1.1"/>
+  <circle cx="73" cy="146" r="5" fill="#3A4660" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M76 92 L84 98 L80 148 L76 148 Z" fill="#78849A" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M73 126 L81 130 L81 134 L73 132 Z" fill="#5E6A80" stroke="#12161E" stroke-width="0.9"/>
+  <path d="M73 136 L81 140 L81 144 L73 142 Z" fill="#5E6A80" stroke="#12161E" stroke-width="0.9"/>
+  <ellipse cx="60" cy="94" rx="17" ry="4" fill="#8E9AAC" opacity="0.5"/>
+  <path d="M78 60 L84 66 L84 92 L78 92 Z" fill="#6E7A90" opacity="0.7"/>
+</symbol>
+<symbol id="habitantD" viewBox="0 0 120 160">
+  <!-- gardien en armure, casque a visiere -->
+  <defs>
+    <linearGradient id="armureD" x1="0%" y1="0%" x2="100%" y2="6%">
+      <stop offset="0%" stop-color="#FFFFFF"/><stop offset="30%" stop-color="#EDF2F8"/>
+      <stop offset="68%" stop-color="#C0CBD8"/><stop offset="100%" stop-color="#8A96A6"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="63" cy="153" rx="31" ry="6" fill="#5A431F" opacity="0.32"/>
+  <ellipse cx="60" cy="151" rx="23" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <path d="M36 152 L34 94 Q34 74 60 74 Q86 74 86 94 L84 152 Z" fill="url(#armureD)" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M60 74 Q34 74 34 94 L36 152 L60 152 Z" fill="#FFFFFF" opacity="0.45"/>
+  <path d="M44 96 Q60 104 76 96 L74 116 Q60 122 46 116 Z" fill="#C7D0DA" stroke="#12161E" stroke-width="1.2"/>
+  <path d="M52 100 L60 108 L68 100" stroke="#8A96A6" stroke-width="1.6" fill="none"/>
+  <rect x="42" y="122" width="36" height="9" rx="3" fill="#3A4660" stroke="#12161E" stroke-width="1.2"/>
+  <rect x="54" y="121" width="12" height="11" rx="2" fill="#C9A96E" stroke="#12161E" stroke-width="0.9"/>
+  <path d="M42 134 L54 134 L54 152 L42 152 Z" fill="#5A6678" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M66 134 L78 134 L78 152 L66 152 Z" fill="#5A6678" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M60 18 Q38 18 37 46 Q37 60 46 66 L74 66 Q83 60 83 46 Q82 18 60 18 Z" fill="#F2F6FA" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M60 18 Q38 18 37 46 L42 46 Q43 26 60 26 Z" fill="#FFFFFF" opacity="0.6"/>
+  <path d="M44 40 Q60 34 76 40 L76 54 Q60 60 44 54 Z" fill="#1E2A38" stroke="#12161E" stroke-width="1.3"/>
+  <path d="M47 43 Q54 40 60 39 L60 52 Q52 51 47 48 Z" fill="#5C7A9E" opacity="0.6"/>
+  <path d="M60 18 Q60 12 60 8" stroke="#C9A96E" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="60" cy="7" r="3" fill="#C9A96E" stroke="#12161E" stroke-width="0.9"/>
+  <path d="M80 82 L88 88 L86 152 L80 152 Z" fill="#8A96A6" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M76 122 L84 126 L84 132 L76 130 Z" fill="#2A3244" stroke="#12161E" stroke-width="0.9"/>
+  <path d="M54 134 L58 138 L58 152 L54 152 Z" fill="#3E4A5C" opacity="0.75"/>
+  <path d="M78 134 L82 138 L82 152 L78 152 Z" fill="#3E4A5C" opacity="0.75"/>
+  <path d="M76 22 L84 28 L82 62 L76 66 Z" fill="#C0CBD8" stroke="#12161E" stroke-width="1"/>
+  <ellipse cx="60" cy="70" rx="15" ry="4" fill="#A8B4C4" opacity="0.5"/>
+  <path d="M60 52 L58 56 Q60 58 62 56 Z" fill="#C0CBD8" opacity="0.5"/>
+  <ellipse cx="52" cy="46" rx="4" ry="2.2" fill="#8FB4D8" opacity="0.4"/>
+  <ellipse cx="68" cy="46" rx="4" ry="2.2" fill="#8FB4D8" opacity="0.4"/>
+</symbol>
+<symbol id="habitantE" viewBox="0 0 120 160">
+  <!-- sage en longue robe violette -->
+  <defs>
+    <linearGradient id="robeE" x1="0%" y1="0%" x2="100%" y2="8%">
+      <stop offset="0%" stop-color="#A894C4"/><stop offset="32%" stop-color="#8A76A8"/>
+      <stop offset="70%" stop-color="#665488"/><stop offset="100%" stop-color="#3E3260"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="63" cy="153" rx="33" ry="6" fill="#5A431F" opacity="0.32"/>
+  <ellipse cx="60" cy="151" rx="25" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <path d="M30 152 Q28 108 42 84 Q50 74 60 74 Q70 74 78 84 Q92 108 90 152 Z" fill="url(#robeE)" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M30 152 Q28 108 42 84 Q50 74 60 74 L60 152 Z" fill="#B8A4D4" opacity="0.35"/>
+  <path d="M48 84 Q60 92 72 84 L70 152 L50 152 Z" fill="#4E3F66" stroke="#12161E" stroke-width="1.1"/>
+  <rect x="44" y="112" width="32" height="9" rx="3" fill="#C9A96E" stroke="#12161E" stroke-width="1.2"/>
+  <rect x="55" y="111" width="11" height="11" rx="2" fill="#8A6A3A" stroke="#12161E" stroke-width="0.9"/>
+  <ellipse cx="60" cy="46" rx="16" ry="18" fill="url(#peauA)" stroke="#12161E" stroke-width="1.4"/>
+  <path d="M44 44 Q46 24 60 24 Q74 24 76 44 Q68 32 60 32 Q52 32 44 44 Z" fill="#DDE2E8" stroke="#12161E" stroke-width="1.2"/>
+  <path d="M44 44 Q46 24 60 24 L60 32 Q52 32 44 44 Z" fill="#FFFFFF" opacity="0.5"/>
+  <circle cx="54" cy="46" r="2.4" fill="#2A1A12"/>
+  <circle cx="53.4" cy="45.2" r="0.9" fill="#FFFFFF"/>
+  <circle cx="66" cy="46" r="2.4" fill="#2A1A12"/>
+  <circle cx="65.4" cy="45.2" r="0.9" fill="#FFFFFF"/>
+  <path d="M48 39 Q54 36 59 38" stroke="#E8ECF0" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M61 38 Q66 36 72 39" stroke="#E8ECF0" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M48 56 Q50 78 60 84 Q70 78 72 56 Q66 62 60 62 Q54 62 48 56 Z" fill="#E8ECF0" stroke="#C0CAD6" stroke-width="0.9"/>
+  <path d="M56 64 Q58 76 60 82" stroke="#B8C4D0" stroke-width="1.2" fill="none" opacity="0.6"/>
+  <path d="M64 64 Q62 76 60 82" stroke="#B8C4D0" stroke-width="1.2" fill="none" opacity="0.6"/>
+  <path d="M88 96 L88 152" stroke="#8A6A3A" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="88" cy="92" r="6" fill="#C9A96E" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M84 88 L92 96 L90 152 L84 152 Z" fill="#3E3260" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M74 112 L82 116 L82 122 L74 120 Z" fill="#8A6A3A" stroke="#12161E" stroke-width="0.9"/>
+  <ellipse cx="60" cy="86" rx="17" ry="4" fill="#665488" opacity="0.5"/>
+  <path d="M50 90 Q60 96 70 90" stroke="#B8A4D4" stroke-width="1.2" fill="none" opacity="0.4"/>
+  <path d="M52 120 Q60 126 68 120" stroke="#8A76A8" stroke-width="1.1" fill="none" opacity="0.35"/>
+  <path d="M60 52 L58 56 Q60 58 62 56 Z" fill="#D9A57A" opacity="0.65"/>
+  <path d="M44 48 Q42 51 44 54" stroke="#D9A57A" stroke-width="1.4" fill="none" opacity="0.5"/>
+  <path d="M76 48 Q78 51 76 54" stroke="#C08B65" stroke-width="1.4" fill="none" opacity="0.5"/>
+  <ellipse cx="52" cy="42" rx="3.4" ry="1.9" fill="#FFFFFF" opacity="0.26"/>
+  <!-- modele du visage : lumiere haut-gauche, ombre bas-droite -->
+  <ellipse cx="54" cy="42" rx="5.5" ry="6" fill="#FFE0C2" opacity="0.22"/>
+  <ellipse cx="68" cy="50" rx="5.5" ry="6" fill="#C08B65" opacity="0.22"/>
+  <!-- arete du nez -->
+  <path d="M60 44 L59 51" stroke="#FFE0C2" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+  <path d="M61 44 L62 51" stroke="#8A6642" stroke-width="1.1" opacity="0.35" stroke-linecap="round"/>
+  <!-- narines -->
+  <ellipse cx="57.5" cy="53" rx="1.3" ry="0.9" fill="#8A6642" opacity="0.5"/>
+  <ellipse cx="62.5" cy="53" rx="1.3" ry="0.9" fill="#8A6642" opacity="0.5"/>
+  <!-- levres -->
+  <path d="M55 58 Q60 61 65 58" stroke="#8A6642" stroke-width="1.6" fill="none" opacity="0.62" stroke-linecap="round"/>
+  <path d="M56 57 Q60 59 64 57" stroke="#E8A088" stroke-width="1.2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <!-- menton -->
+  <path d="M56 62 Q60 64 64 62" stroke="#C08B65" stroke-width="1.2" fill="none" opacity="0.32"/>
+  <!-- paupieres -->
+  <path d="M50 43 Q54 41 58 43" stroke="#8A6642" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <path d="M62 43 Q66 41 70 43" stroke="#8A6642" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <!-- oreilles -->
+  <ellipse cx="43" cy="47" rx="3.2" ry="4.6" fill="#FFE0C2" stroke="#8A6642" stroke-width="0.9" opacity="0.85"/>
+  <ellipse cx="77" cy="47" rx="3.2" ry="4.6" fill="#C08B65" stroke="#8A6642" stroke-width="0.9" opacity="0.85"/>
+  <path d="M43 45 Q44 47 43 49" stroke="#8A6642" stroke-width="0.8" fill="none" opacity="0.4"/>
+</symbol>
+<symbol id="habitantF" viewBox="0 0 120 160">
+  <!-- mecanicienne en salopette orange -->
+  <defs>
+    <linearGradient id="salopF" x1="0%" y1="0%" x2="100%" y2="8%">
+      <stop offset="0%" stop-color="#F0925E"/><stop offset="32%" stop-color="#D67848"/>
+      <stop offset="70%" stop-color="#A85832"/><stop offset="100%" stop-color="#6E3A1E"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="63" cy="153" rx="30" ry="6" fill="#5A431F" opacity="0.32"/>
+  <ellipse cx="60" cy="151" rx="22" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <path d="M38 152 L36 96 Q36 78 60 78 Q84 78 84 96 L82 152 Z" fill="url(#salopF)" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M60 78 Q36 78 36 96 L38 152 L60 152 Z" fill="#FFAE7E" opacity="0.3"/>
+  <path d="M46 78 L46 100 L74 100 L74 78 Q60 84 46 78 Z" fill="#A24E2C" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M50 78 L50 62" stroke="#A24E2C" stroke-width="4" stroke-linecap="round"/>
+  <path d="M70 78 L70 62" stroke="#A24E2C" stroke-width="4" stroke-linecap="round"/>
+  <rect x="42" y="114" width="36" height="9" rx="3" fill="#5C4326" stroke="#12161E" stroke-width="1.2"/>
+  <rect x="46" y="123" width="6" height="12" rx="2" fill="#8592B0" stroke="#12161E" stroke-width="0.9"/>
+  <rect x="56" y="123" width="6" height="10" rx="2" fill="#C9A96E" stroke="#12161E" stroke-width="0.9"/>
+  <path d="M42 136 L54 136 L54 152 L42 152 Z" fill="#4A3218" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M66 136 L78 136 L78 152 L66 152 Z" fill="#4A3218" stroke="#12161E" stroke-width="1.1"/>
+  <ellipse cx="60" cy="50" rx="16" ry="18" fill="url(#peauA)" stroke="#12161E" stroke-width="1.4"/>
+  <path d="M44 48 Q46 28 60 28 Q74 28 76 48 Q68 36 60 36 Q52 36 44 48 Z" fill="#8A5A3A" stroke="#12161E" stroke-width="1.2"/>
+  <circle cx="79" cy="42" r="8" fill="#8A5A3A" stroke="#12161E" stroke-width="1.2"/>
+  <circle cx="77" cy="40" r="3" fill="#A6714A" opacity="0.6"/>
+  <circle cx="54" cy="50" r="2.4" fill="#2A1A12"/>
+  <circle cx="53.4" cy="49.2" r="0.9" fill="#FFFFFF"/>
+  <circle cx="66" cy="50" r="2.4" fill="#2A1A12"/>
+  <circle cx="65.4" cy="49.2" r="0.9" fill="#FFFFFF"/>
+  <path d="M49 44 Q54 41 58 43" stroke="#6E4428" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M62 43 Q66 41 71 44" stroke="#6E4428" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M55 59 Q60 62 65 59" stroke="#C08B65" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M78 84 L86 90 L84 152 L78 152 Z" fill="#6E3A1E" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M76 114 L84 118 L84 124 L76 122 Z" fill="#3E2C14" stroke="#12161E" stroke-width="0.9"/>
+  <path d="M54 136 L58 140 L58 152 L54 152 Z" fill="#301F0E" opacity="0.75"/>
+  <path d="M78 136 L82 140 L82 152 L78 152 Z" fill="#301F0E" opacity="0.75"/>
+  <ellipse cx="60" cy="68" rx="14" ry="4" fill="#A85832" opacity="0.5"/>
+  <path d="M48 88 Q60 94 72 88" stroke="#FFAE7E" stroke-width="1.2" fill="none" opacity="0.4"/>
+  <path d="M60 56 L58 60 Q60 62 62 60 Z" fill="#D9A57A" opacity="0.65"/>
+  <ellipse cx="47" cy="56" rx="3.4" ry="2.4" fill="#E8A088" opacity="0.4"/>
+  <ellipse cx="73" cy="56" rx="3.4" ry="2.4" fill="#E8A088" opacity="0.4"/>
+  <path d="M45 52 Q43 55 45 58" stroke="#D9A57A" stroke-width="1.4" fill="none" opacity="0.5"/>
+  <!-- modele du visage : lumiere haut-gauche, ombre bas-droite -->
+  <ellipse cx="54" cy="46" rx="5.5" ry="6" fill="#FFE0C2" opacity="0.22"/>
+  <ellipse cx="68" cy="54" rx="9" ry="10" fill="#B87E52" opacity="0.3"/>
+  <!-- arete du nez -->
+  <path d="M60 48 L59 55" stroke="#FFE0C2" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+  <path d="M61 48 L62 55" stroke="#7E5432" stroke-width="1.1" opacity="0.35" stroke-linecap="round"/>
+  <!-- narines -->
+  <ellipse cx="57.5" cy="57" rx="1.3" ry="0.9" fill="#7E5432" opacity="0.5"/>
+  <ellipse cx="62.5" cy="57" rx="1.3" ry="0.9" fill="#7E5432" opacity="0.5"/>
+  <!-- levres -->
+  <path d="M55 62 Q60 65 65 62" stroke="#7E5432" stroke-width="1.6" fill="none" opacity="0.62" stroke-linecap="round"/>
+  <path d="M56 61 Q60 63 64 61" stroke="#E8A088" stroke-width="1.2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <!-- menton -->
+  <path d="M56 66 Q60 68 64 66" stroke="#B87E52" stroke-width="1.2" fill="none" opacity="0.32"/>
+  <!-- paupieres -->
+  <path d="M50 47 Q54 45 58 47" stroke="#7E5432" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <path d="M62 47 Q66 45 70 47" stroke="#7E5432" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <!-- oreilles -->
+  <ellipse cx="43" cy="51" rx="3.2" ry="4.6" fill="#FFE0C2" stroke="#7E5432" stroke-width="0.9" opacity="0.85"/>
+  <ellipse cx="77" cy="51" rx="3.2" ry="4.6" fill="#B87E52" stroke="#7E5432" stroke-width="0.9" opacity="0.85"/>
+  <path d="M43 49 Q44 51 43 53" stroke="#7E5432" stroke-width="0.8" fill="none" opacity="0.4"/>
+</symbol>
+<symbol id="habitantG" viewBox="0 0 120 160">
+  <!-- eclaireur en tenue verte, avec sac -->
+  <!-- ombre de contact -->
+  <ellipse cx="60" cy="151" rx="21" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <ellipse cx="62" cy="153" rx="30" ry="6" fill="#5A431F" opacity="0.3"/>
+  <path d="M38 152 L35 96 Q35 78 60 78 Q85 78 85 96 L82 152 Z" fill="#4A7C59" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M38 152 L35 96 Q35 78 60 78 L60 152 Z" fill="#5E9670" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M82 84 Q94 88 94 104 Q94 118 84 120 L82 96 Z" fill="#3A5F45" stroke="#12161E" stroke-width="1.6"/>
+  <rect x="44" y="112" width="32" height="8" rx="3" fill="#2E4A38" stroke="#12161E" stroke-width="1.6"/>
+  <circle cx="60" cy="116" r="3.5" fill="#C9A96E" stroke="#12161E" stroke-width="1.6"/>
+  <!-- tete, bandeau -->
+  <ellipse cx="60" cy="50" rx="16" ry="18" fill="#C89060" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M44 46 Q46 28 60 28 Q74 28 76 46 Q68 34 60 34 Q52 34 44 46 Z" fill="#2E2018" stroke="#12161E" stroke-width="1.6"/>
+  <rect x="43" y="42" width="34" height="6" rx="3" fill="#C0623B" stroke="#12161E" stroke-width="1.6"/>
+  <circle cx="54" cy="52" r="2.4" fill="#2A1A12" stroke="#12161E" stroke-width="1.6"/>
+  <circle cx="53.4" cy="51.2" r="0.9" fill="#FFFFFF"/>
+  <circle cx="66" cy="52" r="2.4" fill="#2A1A12" stroke="#12161E" stroke-width="1.6"/>
+  <circle cx="65.4" cy="51.2" r="0.9" fill="#FFFFFF"/>
+  <path d="M55 61 Q60 64 65 61" stroke="#9E6C42" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M42 132 L54 132 L54 152 L42 152 Z" fill="#2E4A38" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M66 132 L78 132 L78 152 L66 152 Z" fill="#2E4A38" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M60 78 Q36 78 36 96 L38 152 L60 152 Z" fill="#7EC098" opacity="0.28"/>
+  <path d="M49 46 Q54 43 58 45" stroke="#1E1610" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M62 45 Q66 43 71 46" stroke="#1E1610" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <ellipse cx="47" cy="56" rx="3.5" ry="2.5" fill="#B06848" opacity="0.35"/>
+  <ellipse cx="73" cy="56" rx="3.5" ry="2.5" fill="#B06848" opacity="0.35"/>
+  <!-- cote droit en perspective cavaliere -->
+  <path d="M80 84 L88 92 L86 152 L80 152 Z" fill="#2E4A38" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M76 114 L84 118 L84 124 L76 122 Z" fill="#2E4A38" stroke="#12161E" stroke-width="0.9"/>
+  <ellipse cx="60" cy="80" rx="15" ry="4" fill="#3A5F45" opacity="0.5"/>
+  <path d="M50 96 Q60 102 70 96" stroke="#3A5F45" stroke-width="1.2" fill="none" opacity="0.4"/>
+  <path d="M54 134 L58 138 L58 152 L54 152 Z" fill="#2E4A38" opacity="0.7"/>
+  <path d="M78 134 L82 138 L82 152 L78 152 Z" fill="#2E4A38" opacity="0.7"/>
+  <path d="M60 54 L58 58 Q60 60 62 58 Z" fill="#C99870" opacity="0.6"/>
+  <ellipse cx="47" cy="56" rx="3.4" ry="2.3" fill="#E8A088" opacity="0.34"/>
+  <ellipse cx="73" cy="56" rx="3.4" ry="2.3" fill="#E8A088" opacity="0.34"/>
+  <path d="M45 50 Q43 53 45 56" stroke="#C99870" stroke-width="1.3" fill="none" opacity="0.45"/>
+  <path d="M75 50 Q77 53 75 56" stroke="#B08560" stroke-width="1.3" fill="none" opacity="0.45"/>
+  <!-- modele du visage : lumiere haut-gauche, ombre bas-droite -->
+  <ellipse cx="54" cy="48" rx="5.5" ry="6" fill="#F4CFA0" opacity="0.22"/>
+  <ellipse cx="68" cy="56" rx="5.5" ry="6" fill="#A8724A" opacity="0.22"/>
+  <!-- arete du nez -->
+  <path d="M60 50 L59 57" stroke="#F4CFA0" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+  <path d="M61 50 L62 57" stroke="#6E4428" stroke-width="1.1" opacity="0.35" stroke-linecap="round"/>
+  <!-- narines -->
+  <ellipse cx="57.5" cy="59" rx="1.3" ry="0.9" fill="#6E4428" opacity="0.5"/>
+  <ellipse cx="62.5" cy="59" rx="1.3" ry="0.9" fill="#6E4428" opacity="0.5"/>
+  <!-- levres -->
+  <path d="M55 64 Q60 67 65 64" stroke="#6E4428" stroke-width="1.6" fill="none" opacity="0.62" stroke-linecap="round"/>
+  <path d="M56 63 Q60 65 64 63" stroke="#E8A088" stroke-width="1.2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <!-- menton -->
+  <path d="M56 68 Q60 70 64 68" stroke="#A8724A" stroke-width="1.2" fill="none" opacity="0.32"/>
+  <!-- paupieres -->
+  <path d="M50 49 Q54 47 58 49" stroke="#6E4428" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <path d="M62 49 Q66 47 70 49" stroke="#6E4428" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <!-- oreilles -->
+  <ellipse cx="43" cy="53" rx="3.2" ry="4.6" fill="#F4CFA0" stroke="#6E4428" stroke-width="0.9" opacity="0.85"/>
+  <ellipse cx="77" cy="53" rx="3.2" ry="4.6" fill="#A8724A" stroke="#6E4428" stroke-width="0.9" opacity="0.85"/>
+  <path d="M43 51 Q44 53 43 55" stroke="#6E4428" stroke-width="0.8" fill="none" opacity="0.4"/>
+</symbol>
+<symbol id="habitantH" viewBox="0 0 120 160">
+  <!-- veilleuse en cape sombre, capuche relevee et regard lumineux -->
+  <!-- ombre de contact -->
+  <ellipse cx="60" cy="151" rx="21" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <ellipse cx="62" cy="153" rx="32" ry="6" fill="#5A431F" opacity="0.3"/>
+  <path d="M28 152 Q26 106 42 82 Q50 72 60 72 Q70 72 78 82 Q94 106 92 152 Z" fill="#2E3A52" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M28 152 Q26 106 42 82 Q50 72 60 72 L60 152 Z" fill="#3E4A66" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M60 72 Q42 74 40 96 Q39 110 44 118 L48 92 Q50 80 60 78 Q70 80 72 92 L76 118 Q81 110 80 96 Q78 74 60 72 Z" fill="#232C40" stroke="#12161E" stroke-width="1.6"/>
+  <rect x="44" y="112" width="32" height="8" rx="3" fill="#8A6A3A" stroke="#12161E" stroke-width="1.6"/>
+  <!-- capuche, visage dans l'ombre -->
+  <path d="M60 20 Q38 20 37 48 Q37 64 47 70 L73 70 Q83 64 83 48 Q82 20 60 20 Z" fill="#232C40" stroke="#12161E" stroke-width="1.6"/>
+  <ellipse cx="60" cy="50" rx="14" ry="16" fill="#5E5044" stroke="#12161E" stroke-width="1.6"/>
+  <circle cx="54" cy="48" r="2.8" fill="#5FE0C4" stroke="#12161E" stroke-width="1.6"/>
+  <circle cx="66" cy="48" r="2.8" fill="#5FE0C4" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M42 132 L54 132 L54 152 L42 152 Z" fill="#1A2234" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M66 132 L78 132 L78 152 L66 152 Z" fill="#1A2234" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M60 72 Q34 74 32 100 L34 152 L60 152 Z" fill="#5E6E90" opacity="0.25"/>
+  <rect x="44" y="112" width="32" height="9" rx="3" fill="#8A6A3A" stroke="#12161E" stroke-width="1.2"/>
+  <rect x="55" y="111" width="11" height="11" rx="2" fill="#C9A96E" stroke="#12161E" stroke-width="0.9"/>
+  <circle cx="54" cy="48" r="3" fill="#5FE0C4"/>
+  <circle cx="66" cy="48" r="3" fill="#5FE0C4"/>
+  <circle cx="53" cy="47" r="1.1" fill="#DFFFF6"/>
+  <!-- cote droit en perspective cavaliere -->
+  <path d="M80 84 L88 92 L86 152 L80 152 Z" fill="#141A26" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M76 114 L84 118 L84 124 L76 122 Z" fill="#141A26" stroke="#12161E" stroke-width="0.9"/>
+  <ellipse cx="60" cy="80" rx="15" ry="4" fill="#232C40" opacity="0.5"/>
+  <path d="M50 96 Q60 102 70 96" stroke="#232C40" stroke-width="1.2" fill="none" opacity="0.4"/>
+  <path d="M54 134 L58 138 L58 152 L54 152 Z" fill="#141A26" opacity="0.7"/>
+  <path d="M78 134 L82 138 L82 152 L78 152 Z" fill="#141A26" opacity="0.7"/>
+  <!-- modele du visage : lumiere haut-gauche, ombre bas-droite -->
+  <ellipse cx="54" cy="46" rx="5.5" ry="6" fill="#E8C4A0" opacity="0.22"/>
+  <ellipse cx="68" cy="54" rx="5.5" ry="6" fill="#A8785A" opacity="0.22"/>
+  <!-- arete du nez -->
+  <path d="M60 48 L59 55" stroke="#E8C4A0" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+  <path d="M61 48 L62 55" stroke="#6E4E38" stroke-width="1.1" opacity="0.35" stroke-linecap="round"/>
+  <!-- narines -->
+  <ellipse cx="57.5" cy="57" rx="1.3" ry="0.9" fill="#6E4E38" opacity="0.5"/>
+  <ellipse cx="62.5" cy="57" rx="1.3" ry="0.9" fill="#6E4E38" opacity="0.5"/>
+  <!-- levres -->
+  <path d="M55 62 Q60 65 65 62" stroke="#6E4E38" stroke-width="1.6" fill="none" opacity="0.62" stroke-linecap="round"/>
+  <path d="M56 61 Q60 63 64 61" stroke="#E8A088" stroke-width="1.2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <!-- menton -->
+  <path d="M56 66 Q60 68 64 66" stroke="#A8785A" stroke-width="1.2" fill="none" opacity="0.32"/>
+  <!-- paupieres -->
+  <path d="M50 47 Q54 45 58 47" stroke="#6E4E38" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <path d="M62 47 Q66 45 70 47" stroke="#6E4E38" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <!-- oreilles -->
+  <ellipse cx="43" cy="51" rx="3.2" ry="4.6" fill="#E8C4A0" stroke="#6E4E38" stroke-width="0.9" opacity="0.85"/>
+  <ellipse cx="77" cy="51" rx="3.2" ry="4.6" fill="#A8785A" stroke="#6E4E38" stroke-width="0.9" opacity="0.85"/>
+  <path d="M43 49 Q44 51 43 53" stroke="#6E4E38" stroke-width="0.8" fill="none" opacity="0.4"/>
+</symbol>
+<symbol id="habitantI" viewBox="0 0 120 160">
+  <!-- botaniste en tablier, avec une plante -->
+  <!-- ombre de contact -->
+  <ellipse cx="60" cy="151" rx="21" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <ellipse cx="62" cy="153" rx="30" ry="6" fill="#5A431F" opacity="0.3"/>
+  <path d="M38 152 L35 96 Q35 78 60 78 Q85 78 85 96 L82 152 Z" fill="#7A9E4A" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M38 152 L35 96 Q35 78 60 78 L60 152 Z" fill="#93B85E" stroke="#12161E" stroke-width="1.3"/>
+  <path d="M46 90 L46 128 L74 128 L74 90 Q60 96 46 90 Z" fill="#E8DCC0" stroke="#12161E" stroke-width="1.2"/>
+  <rect x="44" y="128" width="32" height="8" rx="3" fill="#5C4326" stroke="#12161E" stroke-width="1.2"/>
+  <ellipse cx="60" cy="50" rx="16" ry="18" fill="#E8B892" stroke="#12161E" stroke-width="1.4"/>
+  <path d="M44 46 Q46 26 60 26 Q74 26 76 46 Q68 34 60 34 Q52 34 44 46 Z" fill="#6E4A2A" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="54" cy="50" r="2.4" fill="#2A1A12" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="53.4" cy="49.2" r="0.9" fill="#FFFFFF"/>
+  <circle cx="66" cy="50" r="2.4" fill="#2A1A12" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="65.4" cy="49.2" r="0.9" fill="#FFFFFF"/>
+  <path d="M86 104 Q94 92 92 78 Q86 88 84 98 Z" fill="#4A7C2A" stroke="#12161E" stroke-width="1"/>
+  <path d="M42 132 L54 132 L54 152 L42 152 Z" fill="#4A6E32" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M66 132 L78 132 L78 152 L66 152 Z" fill="#4A6E32" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M60 78 Q35 78 35 96 L38 152 L60 152 Z" fill="#A8CE7E" opacity="0.3"/>
+  <path d="M49 42 Q54 39 58 41" stroke="#4A2E18" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M62 41 Q66 39 71 42" stroke="#4A2E18" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M55 59 Q60 62 65 59" stroke="#C08B65" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <!-- cote droit en perspective cavaliere -->
+  <path d="M80 84 L88 92 L86 152 L80 152 Z" fill="#3A5F28" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M76 114 L84 118 L84 124 L76 122 Z" fill="#3A5F28" stroke="#12161E" stroke-width="0.9"/>
+  <ellipse cx="60" cy="80" rx="15" ry="4" fill="#4A7C2A" opacity="0.5"/>
+  <path d="M50 96 Q60 102 70 96" stroke="#4A7C2A" stroke-width="1.2" fill="none" opacity="0.4"/>
+  <path d="M54 134 L58 138 L58 152 L54 152 Z" fill="#3A5F28" opacity="0.7"/>
+  <path d="M78 134 L82 138 L82 152 L78 152 Z" fill="#3A5F28" opacity="0.7"/>
+  <path d="M60 54 L58 58 Q60 60 62 58 Z" fill="#C99870" opacity="0.6"/>
+  <ellipse cx="47" cy="56" rx="3.4" ry="2.3" fill="#E8A088" opacity="0.34"/>
+  <ellipse cx="73" cy="56" rx="3.4" ry="2.3" fill="#E8A088" opacity="0.34"/>
+  <path d="M45 50 Q43 53 45 56" stroke="#C99870" stroke-width="1.3" fill="none" opacity="0.45"/>
+  <path d="M75 50 Q77 53 75 56" stroke="#B08560" stroke-width="1.3" fill="none" opacity="0.45"/>
+  <!-- modele du visage : lumiere haut-gauche, ombre bas-droite -->
+  <ellipse cx="54" cy="46" rx="5.5" ry="6" fill="#FFE0C2" opacity="0.22"/>
+  <ellipse cx="68" cy="54" rx="5.5" ry="6" fill="#C08B65" opacity="0.22"/>
+  <!-- arete du nez -->
+  <path d="M60 48 L59 55" stroke="#FFE0C2" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+  <path d="M61 48 L62 55" stroke="#8A6642" stroke-width="1.1" opacity="0.35" stroke-linecap="round"/>
+  <!-- narines -->
+  <ellipse cx="57.5" cy="57" rx="1.3" ry="0.9" fill="#8A6642" opacity="0.5"/>
+  <ellipse cx="62.5" cy="57" rx="1.3" ry="0.9" fill="#8A6642" opacity="0.5"/>
+  <!-- levres -->
+  <path d="M55 62 Q60 65 65 62" stroke="#8A6642" stroke-width="1.6" fill="none" opacity="0.62" stroke-linecap="round"/>
+  <path d="M56 61 Q60 63 64 61" stroke="#E8A088" stroke-width="1.2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <!-- menton -->
+  <path d="M56 66 Q60 68 64 66" stroke="#C08B65" stroke-width="1.2" fill="none" opacity="0.32"/>
+  <!-- paupieres -->
+  <path d="M50 47 Q54 45 58 47" stroke="#8A6642" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <path d="M62 47 Q66 45 70 47" stroke="#8A6642" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <!-- oreilles -->
+  <ellipse cx="43" cy="51" rx="3.2" ry="4.6" fill="#FFE0C2" stroke="#8A6642" stroke-width="0.9" opacity="0.85"/>
+  <ellipse cx="77" cy="51" rx="3.2" ry="4.6" fill="#C08B65" stroke="#8A6642" stroke-width="0.9" opacity="0.85"/>
+  <path d="M43 49 Q44 51 43 53" stroke="#8A6642" stroke-width="0.8" fill="none" opacity="0.4"/>
+</symbol>
+<symbol id="habitantJ" viewBox="0 0 120 160">
+  <!-- astronome au telescope, cape etoilee -->
+  <!-- ombre de contact -->
+  <ellipse cx="60" cy="151" rx="21" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <ellipse cx="62" cy="153" rx="32" ry="6" fill="#5A431F" opacity="0.3"/>
+  <path d="M30 152 Q28 106 44 84 Q52 74 60 74 Q68 74 76 84 Q92 106 90 152 Z" fill="#2E3E6E" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M30 152 Q28 106 44 84 Q52 74 60 74 L60 152 Z" fill="#42558A" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="44" cy="104" r="2.5" fill="#F0E4C0" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="76" cy="122" r="2" fill="#F0E4C0" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="52" cy="136" r="1.8" fill="#F0E4C0" stroke="#12161E" stroke-width="1.3"/>
+  <rect x="44" y="112" width="32" height="8" rx="3" fill="#C9A96E" stroke="#12161E" stroke-width="1.2"/>
+  <ellipse cx="60" cy="48" rx="16" ry="18" fill="#D9A878" stroke="#12161E" stroke-width="1.4"/>
+  <path d="M42 44 Q44 24 60 24 Q76 24 78 44 Q68 32 60 32 Q52 32 42 44 Z" fill="#DDE2E8" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="54" cy="48" r="2.4" fill="#2A1A12" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="53.4" cy="47.2" r="0.9" fill="#FFFFFF"/>
+  <circle cx="66" cy="48" r="2.4" fill="#2A1A12" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="65.4" cy="47.2" r="0.9" fill="#FFFFFF"/>
+  <rect x="84" y="86" width="6" height="34" rx="3" fill="#8592B0" stroke="#12161E" stroke-width="1" transform="rotate(-24 87 103)"/>
+  <path d="M44 134 L56 134 L56 152 L44 152 Z" fill="#1E2A46" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M64 134 L76 134 L76 152 L64 152 Z" fill="#1E2A46" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M60 74 Q30 76 30 108 L32 152 L60 152 Z" fill="#5E76B0" opacity="0.28"/>
+  <path d="M48 40 Q54 37 58 39" stroke="#C0CAD6" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M62 39 Q66 37 72 40" stroke="#C0CAD6" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M55 57 Q60 60 65 57" stroke="#B08560" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <!-- cote droit en perspective cavaliere -->
+  <path d="M80 84 L88 92 L86 152 L80 152 Z" fill="#1E2A46" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M76 114 L84 118 L84 124 L76 122 Z" fill="#1E2A46" stroke="#12161E" stroke-width="0.9"/>
+  <ellipse cx="60" cy="80" rx="15" ry="4" fill="#2E3E6E" opacity="0.5"/>
+  <path d="M50 96 Q60 102 70 96" stroke="#2E3E6E" stroke-width="1.2" fill="none" opacity="0.4"/>
+  <path d="M54 134 L58 138 L58 152 L54 152 Z" fill="#1E2A46" opacity="0.7"/>
+  <path d="M78 134 L82 138 L82 152 L78 152 Z" fill="#1E2A46" opacity="0.7"/>
+  <path d="M60 52 L58 56 Q60 58 62 56 Z" fill="#C99870" opacity="0.6"/>
+  <ellipse cx="47" cy="54" rx="3.4" ry="2.3" fill="#E8A088" opacity="0.34"/>
+  <ellipse cx="73" cy="54" rx="3.4" ry="2.3" fill="#E8A088" opacity="0.34"/>
+  <path d="M45 48 Q43 51 45 54" stroke="#C99870" stroke-width="1.3" fill="none" opacity="0.45"/>
+  <path d="M75 48 Q77 51 75 54" stroke="#B08560" stroke-width="1.3" fill="none" opacity="0.45"/>
+  <!-- modele du visage : lumiere haut-gauche, ombre bas-droite -->
+  <ellipse cx="54" cy="44" rx="5.5" ry="6" fill="#F0C49A" opacity="0.22"/>
+  <ellipse cx="68" cy="52" rx="5.5" ry="6" fill="#B07A50" opacity="0.22"/>
+  <!-- arete du nez -->
+  <path d="M60 46 L59 53" stroke="#F0C49A" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+  <path d="M61 46 L62 53" stroke="#7E5432" stroke-width="1.1" opacity="0.35" stroke-linecap="round"/>
+  <!-- narines -->
+  <ellipse cx="57.5" cy="55" rx="1.3" ry="0.9" fill="#7E5432" opacity="0.5"/>
+  <ellipse cx="62.5" cy="55" rx="1.3" ry="0.9" fill="#7E5432" opacity="0.5"/>
+  <!-- levres -->
+  <path d="M55 60 Q60 63 65 60" stroke="#7E5432" stroke-width="1.6" fill="none" opacity="0.62" stroke-linecap="round"/>
+  <path d="M56 59 Q60 61 64 59" stroke="#E8A088" stroke-width="1.2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <!-- menton -->
+  <path d="M56 64 Q60 66 64 64" stroke="#B07A50" stroke-width="1.2" fill="none" opacity="0.32"/>
+  <!-- paupieres -->
+  <path d="M50 45 Q54 43 58 45" stroke="#7E5432" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <path d="M62 45 Q66 43 70 45" stroke="#7E5432" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <!-- oreilles -->
+  <ellipse cx="43" cy="49" rx="3.2" ry="4.6" fill="#F0C49A" stroke="#7E5432" stroke-width="0.9" opacity="0.85"/>
+  <ellipse cx="77" cy="49" rx="3.2" ry="4.6" fill="#B07A50" stroke="#7E5432" stroke-width="0.9" opacity="0.85"/>
+  <path d="M43 47 Q44 49 43 51" stroke="#7E5432" stroke-width="0.8" fill="none" opacity="0.4"/>
+</symbol>
+<symbol id="habitantK" viewBox="0 0 120 160">
+  <!-- forgeronne, tablier de cuir et marteau -->
+  <!-- ombre de contact -->
+  <ellipse cx="60" cy="151" rx="21" ry="4" fill="#3E2C12" opacity="0.28"/>
+  <ellipse cx="62" cy="153" rx="30" ry="6" fill="#5A431F" opacity="0.3"/>
+  <path d="M38 152 L35 96 Q35 78 60 78 Q85 78 85 96 L82 152 Z" fill="#5C4326" stroke="#12161E" stroke-width="1.6"/>
+  <path d="M38 152 L35 96 Q35 78 60 78 L60 152 Z" fill="#7A5A38" stroke="#12161E" stroke-width="1.3"/>
+  <path d="M48 84 L48 130 L72 130 L72 84 Q60 90 48 84 Z" fill="#3E2C18" stroke="#12161E" stroke-width="1.2"/>
+  <rect x="44" y="118" width="32" height="7" rx="3" fill="#2A1D0E" stroke="#12161E" stroke-width="1.3"/>
+  <ellipse cx="60" cy="50" rx="16" ry="18" fill="#C08050" stroke="#12161E" stroke-width="1.4"/>
+  <path d="M44 46 Q46 26 60 26 Q74 26 76 46 Q68 34 60 34 Q52 34 44 46 Z" fill="#3A2418" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="54" cy="50" r="2.4" fill="#1A0E08" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="53.4" cy="49.2" r="0.9" fill="#FFFFFF"/>
+  <circle cx="66" cy="50" r="2.4" fill="#1A0E08" stroke="#12161E" stroke-width="1.3"/>
+  <circle cx="65.4" cy="49.2" r="0.9" fill="#FFFFFF"/>
+  <rect x="84" y="98" width="7" height="26" rx="2" fill="#7A5A38" stroke="#12161E" stroke-width="1"/>
+  <rect x="79" y="94" width="17" height="10" rx="2" fill="#8592B0" stroke="#12161E" stroke-width="1"/>
+  <path d="M42 132 L54 132 L54 152 L42 152 Z" fill="#2E1E0E" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M66 132 L78 132 L78 152 L66 152 Z" fill="#2E1E0E" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M60 78 Q35 78 35 96 L38 152 L60 152 Z" fill="#9A7852" opacity="0.3"/>
+  <path d="M49 44 Q54 41 58 43" stroke="#241408" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <path d="M62 43 Q66 41 71 44" stroke="#241408" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <ellipse cx="47" cy="56" rx="3.5" ry="2.5" fill="#C04828" opacity="0.4"/>
+  <!-- cote droit en perspective cavaliere -->
+  <path d="M80 84 L88 92 L86 152 L80 152 Z" fill="#2E1E0E" stroke="#12161E" stroke-width="1.1"/>
+  <path d="M76 114 L84 118 L84 124 L76 122 Z" fill="#2E1E0E" stroke="#12161E" stroke-width="0.9"/>
+  <ellipse cx="60" cy="80" rx="15" ry="4" fill="#5C4326" opacity="0.5"/>
+  <path d="M50 96 Q60 102 70 96" stroke="#5C4326" stroke-width="1.2" fill="none" opacity="0.4"/>
+  <path d="M54 134 L58 138 L58 152 L54 152 Z" fill="#2E1E0E" opacity="0.7"/>
+  <path d="M78 134 L82 138 L82 152 L78 152 Z" fill="#2E1E0E" opacity="0.7"/>
+  <path d="M60 54 L58 58 Q60 60 62 58 Z" fill="#C99870" opacity="0.6"/>
+  <ellipse cx="47" cy="56" rx="3.4" ry="2.3" fill="#E8A088" opacity="0.34"/>
+  <ellipse cx="73" cy="56" rx="3.4" ry="2.3" fill="#E8A088" opacity="0.34"/>
+  <path d="M45 50 Q43 53 45 56" stroke="#C99870" stroke-width="1.3" fill="none" opacity="0.45"/>
+  <path d="M75 50 Q77 53 75 56" stroke="#B08560" stroke-width="1.3" fill="none" opacity="0.45"/>
+  <!-- modele du visage : lumiere haut-gauche, ombre bas-droite -->
+  <ellipse cx="54" cy="46" rx="5.5" ry="6" fill="#E8B888" opacity="0.22"/>
+  <ellipse cx="68" cy="54" rx="5.5" ry="6" fill="#9E6440" opacity="0.22"/>
+  <!-- arete du nez -->
+  <path d="M60 48 L59 55" stroke="#E8B888" stroke-width="1.6" opacity="0.6" stroke-linecap="round"/>
+  <path d="M61 48 L62 55" stroke="#6A3E22" stroke-width="1.1" opacity="0.35" stroke-linecap="round"/>
+  <!-- narines -->
+  <ellipse cx="57.5" cy="57" rx="1.3" ry="0.9" fill="#6A3E22" opacity="0.5"/>
+  <ellipse cx="62.5" cy="57" rx="1.3" ry="0.9" fill="#6A3E22" opacity="0.5"/>
+  <!-- levres -->
+  <path d="M55 62 Q60 65 65 62" stroke="#6A3E22" stroke-width="1.6" fill="none" opacity="0.62" stroke-linecap="round"/>
+  <path d="M56 61 Q60 63 64 61" stroke="#E8A088" stroke-width="1.2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <!-- menton -->
+  <path d="M56 66 Q60 68 64 66" stroke="#9E6440" stroke-width="1.2" fill="none" opacity="0.32"/>
+  <!-- paupieres -->
+  <path d="M50 47 Q54 45 58 47" stroke="#6A3E22" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <path d="M62 47 Q66 45 70 47" stroke="#6A3E22" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <!-- oreilles -->
+  <ellipse cx="43" cy="51" rx="3.2" ry="4.6" fill="#E8B888" stroke="#6A3E22" stroke-width="0.9" opacity="0.85"/>
+  <ellipse cx="77" cy="51" rx="3.2" ry="4.6" fill="#9E6440" stroke="#6A3E22" stroke-width="0.9" opacity="0.85"/>
+  <path d="M43 49 Q44 51 43 53" stroke="#6A3E22" stroke-width="0.8" fill="none" opacity="0.4"/>
+</symbol>
+</defs>
+</svg>
+
+
+<a href="#tabs" class="skip-link">Aller directement au contenu</a>
+
+<div class="page">
+  <a href="https://rbrdingenierie-ui.github.io/accueil_outils/" class="back-to-hub"><span aria-hidden="true">←</span> Retour au village</a>
+
+  <div class="a11y-bar-espace" id="a11yBarEspace" aria-hidden="true"></div>
+  <div class="a11y-bar" id="a11yBar" role="region" aria-label="Options d'accessibilité">
+    <span class="a11y-bar-label">♿ Accessibilité</span>
+    <button type="button" id="a11yFontBtn" class="a11y-toggle-btn" aria-pressed="false">🔤 Police adaptée</button>
+    <button type="button" id="a11yContrastBtn" class="a11y-toggle-btn" aria-pressed="false">◐ Contraste renforcé</button>
+    <button type="button" id="falcModeBtn" class="a11y-toggle-btn" aria-pressed="false" title="Facile à Lire et à Comprendre : simplifie le texte des onglets « À quoi ça sert » et « Comment ça fonctionne »">📖 Mode FALC</button>
+    <button type="button" id="hoverReadBtn" class="a11y-toggle-btn" aria-pressed="false" title="Lit à voix haute le contenu de la page quand la souris passe dessus">🔊 Lecture au survol</button>
+    <div class="a11y-size-group" role="group" aria-label="Taille du texte">
+      <span>Taille du texte</span>
+      <button type="button" id="a11ySizeDown" class="a11y-size-btn" aria-label="Réduire la taille du texte">A−</button>
+      <button type="button" id="a11ySizeReset" class="a11y-size-btn" aria-label="Taille du texte par défaut">A</button>
+      <button type="button" id="a11ySizeUp" class="a11y-size-btn" aria-label="Agrandir la taille du texte">A+</button>
+    </div>
+  </div>
+
+  <header>
+    <h1>✏️ Mon sketchnote</h1>
+    <p>Dessinez, ajoutez des icônes, du texte et des images pour transformer vos idées en note visuelle.</p>
+  </header>
+
+  <div class="tabs" id="tabs" role="tablist" aria-label="Sections du sketchnote" tabindex="-1">
+    <button class="tab-btn active" data-tab="pourquoi" role="tab" aria-selected="true" aria-controls="panel-pourquoi" id="tabbtn-pourquoi">💡 À quoi ça sert</button>
+    <button class="tab-btn" data-tab="comment" role="tab" aria-selected="false" aria-controls="panel-comment" id="tabbtn-comment">⚙️ Comment ça fonctionne</button>
+    <button class="tab-btn" data-tab="concevoir" role="tab" aria-selected="false" aria-controls="panel-concevoir" id="tabbtn-concevoir">✏️ Concevoir mon sketchnote</button>
+  </div>
+
+  <!-- ===================== ONGLET 1 ===================== -->
+  <div class="tab-panel active" id="panel-pourquoi" role="tabpanel" aria-labelledby="tabbtn-pourquoi" tabindex="0">
+    <div class="panel-title">💡 À quoi sert le sketchnote ?</div>
+
+    <div class="falc-normal-content">
+      <p class="lede">Le sketchnote (ou « note visuelle ») est une technique de facilitation graphique qui mêle titres, mots-clés, dessins, flèches et encadrements pour représenter une idée, un cours ou une lecture.</p>
+
+      <div class="info-card">
+        <h2>🧠 Le même principe que la carte mentale — en plus libre</h2>
+        <p>Le sketchnote s'appuie sur la même idée de « pensée visuelle » que la carte mentale, popularisée par Tony Buzan : le cerveau relie les idées entre elles plutôt que de les traiter comme une liste. La différence principale : le sketchnote ne part pas obligatoirement d'un point central, l'organisation de la page reste plus ouverte.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>🎯 À quoi ça sert concrètement</h2>
+        <p>Selon Éduscol, le sketchnoting permet d'exprimer une idée autrement, de simplifier la compréhension, de faciliter la mémorisation, de synthétiser un contenu, de le relire plus vite, et de résumer un cours ou une lecture de façon plus plaisante et plus ludique.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>✋ Dessiner, même sans savoir dessiner</h2>
+        <p>Pas besoin de savoir dessiner : un sketchnote efficace repose sur des formes simples (flèches, bulles, cadres, symboles) plutôt que sur des illustrations élaborées. L'essentiel est de choisir des mots-clés et des symboles qui ont du sens pour vous.</p>
+      </div>
+
+      <div class="tab-cta">
+        <button class="tb-btn primary" data-goto="concevoir" style="background:var(--navy);color:#fff;border:none;border-radius:12px;padding:13px 22px;font-weight:700;cursor:pointer;">Concevoir mon sketchnote →</button>
+      </div>
+
+      <div class="sources-block">
+        <div class="sources-title">Source</div>
+        <ul>
+          <li>Éduscol — <a href="https://primabord.eduscol.education.fr/qu-est-ce-qu-un-sketchnote" target="_blank" rel="noopener">« Qu'est-ce qu'un sketchnote ? Le dessin comme aide visuelle à la compréhension et la mémorisation »</a>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="falc-simple-content">
+      <p class="lede">Le sketchnote sert à noter des idées avec des dessins.<br>On mélange des mots, des dessins et des flèches sur une page.</p>
+
+      <div class="info-card">
+        <h2>🧠 Comme une carte mentale, mais plus libre</h2>
+        <p>Le sketchnote aide le cerveau à relier les idées entre elles.<br>Il n'y a pas de sujet obligatoire au centre.<br>Vous organisez la page comme vous voulez.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>🎯 À quoi ça sert</h2>
+        <p>Le sketchnote aide à comprendre une idée autrement.<br>Il aide à mieux mémoriser.<br>Il permet de résumer un cours plus vite.</p>
+      </div>
+
+      <div class="info-card">
+        <h2>✋ Pas besoin de savoir dessiner</h2>
+        <p>Utilisez des formes simples : flèches, bulles, cadres.<br>Choisissez des mots-clés importants pour vous.</p>
+      </div>
+
+      <div class="tab-cta">
+        <button class="tb-btn primary" data-goto="concevoir" style="background:var(--navy);color:#fff;border:none;border-radius:12px;padding:13px 22px;font-weight:700;cursor:pointer;">Créer mon sketchnote →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ONGLET 2 ===================== -->
+  <div class="tab-panel" id="panel-comment" role="tabpanel" aria-labelledby="tabbtn-comment" tabindex="0">
+    <div class="panel-title">⚙️ Comment fonctionne l'outil</div>
+
+    <div class="falc-normal-content">
+      <p class="lede">Quatre étapes pour construire votre sketchnote, de la structure de la page jusqu'au résultat final.</p>
+
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-num" style="background:#1F3864;">1</div>
+          <div><strong>Choisissez une forme</strong> pour organiser la page (courbe, colonnes, arborescence, chronologie...) — un repère visuel affiché en fond de page, à sélectionner dans le mode « 📐 Formes ». Vous pouvez aussi choisir « Aucune » pour travailler sans repère.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num" style="background:#E0591F;">2</div>
+          <div><strong>Ajoutez un titre</strong>, suffisamment marqué pour se détacher du reste de la page — le bouton « 🎨 Styliser le titre », sous le champ, permet de choisir sa couleur et sa police.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num" style="background:#168F7F;">3</div>
+          <div><strong>Exprimez et affinez vos idées</strong> avec des mots-clés, icônes et symboles (« 🖼️ Icônes », « 🔤 Texte », « 📷 Image », « 🔗 Autre »), ou en dessinant librement avec le mode « ✏️ Dessiner » (tracé libre ou formes nettes : ligne, flèche, rectangle, cercle...). Déplacez, redimensionnez ou supprimez chaque élément (petite croix), utilisez le mode « 🧹 Gomme » pour effacer une zone d'un geste, ou tout effacer pour recommencer.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num" style="background:#B08D57;">4</div>
+          <div><strong>Téléchargez votre sketchnote en PDF</strong> pour la conserver ou l'imprimer.</div>
+        </div>
+      </div>
+
+      <p class="lede" style="margin-top:18px;">Votre sketchnote se sauvegarde automatiquement à chaque modification.</p>
+
+      <p class="lede">💡 <strong>Si l'envie vous en dit, vous pouvez réaliser votre Sketchnote à la main plutôt que d'utiliser un outil numérique !</strong></p>
+
+      <div class="tab-cta">
+        <button class="tb-btn primary" data-goto="concevoir" style="background:var(--navy);color:#fff;border:none;border-radius:12px;padding:13px 22px;font-weight:700;cursor:pointer;">Concevoir mon sketchnote →</button>
+      </div>
+    </div>
+
+    <div class="falc-simple-content">
+      <p class="lede">Il y a 4 étapes pour faire votre sketchnote.</p>
+
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-num" style="background:#1F3864;">1</div>
+          <div><strong>Choisissez une forme</strong><br>Choisissez une forme pour organiser la page.<br>Allez dans le mode « 📐 Formes ».</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num" style="background:#E0591F;">2</div>
+          <div><strong>Ajoutez un titre</strong><br>Écrivez un titre bien visible.<br>Vous pouvez changer sa couleur et sa police.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num" style="background:#168F7F;">3</div>
+          <div><strong>Exprimez vos idées</strong><br>Ajoutez des mots, des icônes ou des images.<br>Ou dessinez librement avec le mode « ✏️ Dessiner ».<br>Cliquez sur la croix pour supprimer un élément.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num" style="background:#B08D57;">4</div>
+          <div><strong>Téléchargez en PDF</strong><br>Téléchargez votre sketchnote en PDF.<br>Vous pouvez l'imprimer.</div>
+        </div>
+      </div>
+
+      <p class="lede" style="margin-top:18px;">Votre sketchnote s'enregistre tout seul.</p>
+
+      <p class="lede">💡 <strong>Vous pouvez aussi dessiner votre sketchnote à la main.</strong></p>
+
+      <div class="tab-cta">
+        <button class="tb-btn primary" data-goto="concevoir" style="background:var(--navy);color:#fff;border:none;border-radius:12px;padding:13px 22px;font-weight:700;cursor:pointer;">Créer mon sketchnote →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ONGLET 3 ===================== -->
+  <div class="tab-panel" id="panel-concevoir" role="tabpanel" aria-labelledby="tabbtn-concevoir" tabindex="0">
+    <button class="history-toggle" id="historyToggle">📚 Voir mes sketchnotes précédents (0)</button>
+    <div class="history-panel" id="historyPanel">
+      <div class="history-empty" id="historyEmpty">Aucun sketchnote archivé pour l'instant.</div>
+      <div id="historyList"></div>
+    </div>
+
+    <div class="meta-row">
+      <input type="text" class="meta-field" id="matiere" placeholder="Matière" aria-label="Matière">
+      <input type="text" class="meta-field" id="chapitre" placeholder="Chapitre" aria-label="Chapitre">
+    </div>
+    <input type="text" class="meta-field-solo" id="sequenceCours" placeholder="Séquence / partie du cours" aria-label="Séquence ou partie du cours">
+
+    <div class="titre-row">
+      <input type="text" id="titreSketch" placeholder="Titre de mon sketchnote..." aria-label="Titre du sketchnote">
+      <button type="button" id="titreStyleToggle" class="titre-style-toggle" aria-expanded="false" aria-controls="titreStylePanel">🎨 Styliser le titre</button>
+      <div class="titre-style-panel" id="titreStylePanel" hidden></div>
+    </div>
+
+    <div class="mode-row" id="modeRow"></div>
+    <div class="subtoolbar" id="subtoolbar"></div>
+    <input type="file" id="imageFileInput" accept="image/*" style="display:none" aria-label="Choisir une image à insérer">
+    <input type="file" id="audioFileInput" accept="audio/*" style="display:none" aria-label="Choisir un fichier audio à insérer">
+    <input type="file" id="fontFileInput" accept=".ttf,.otf,.woff,.woff2" style="display:none" aria-label="Choisir un fichier de police à ajouter">
+    <input type="file" id="iconFileInput" accept=".svg,.png,.jpg,.jpeg,.gif,.webp" style="display:none" aria-label="Choisir une icône à ajouter">
+
+    <button type="button" id="listViewToggle" class="tb-btn" aria-expanded="false" aria-controls="listViewPanel" style="display:block; margin-bottom:12px;">📋 Voir les éléments ajoutés (pour lecteur d'écran)</button>
+    <div class="list-view-panel" id="listViewPanel" hidden></div>
+
+    <div class="board-wrap" id="boardWrap">
+      <canvas id="guideCanvas" width="1000" height="620"></canvas>
+      <canvas id="drawCanvas" width="1000" height="620"></canvas>
+      <canvas id="previewCanvas" width="1000" height="620"></canvas>
+      <div class="board-overlay" id="boardOverlay"></div>
+    </div>
+
+    <div class="save-indicator" id="saveIndicator" role="status" aria-live="polite">✅ Enregistré</div>
+
+    <div class="actions">
+      <button class="btn-undo" id="undoBtn" disabled>↶ Annuler</button>
+      <button class="btn-danger" id="clearAllBtn">Tout effacer</button>
+      <button class="btn-safe" id="resetBtn">Nouveau sketchnote</button>
+      <button class="btn-print" id="printBtn">Imprimer / PDF</button>
+    </div>
+  </div>
+
+  <footer>Benjamin RICHARD - Tous droits réservés</footer>
+</div>
+
+<script>
+(function () {
+  // ---- onglets ----
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        const isActive = b === btn;
+        b.classList.toggle('active', isActive);
+        b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab));
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    });
+  });
+  document.querySelectorAll('[data-goto]').forEach(btn => {
+    btn.addEventListener('click', () => document.querySelector(`.tab-btn[data-tab="${btn.dataset.goto}"]`).click());
+  });
+
+  // ---- barre d'accessibilite (police adaptee, contraste renforce, taille du texte) ----
+  const A11Y_PREFS_KEY = 'sketchnote-a11y-prefs-v1';
+  let a11yPrefs = { font: false, contrast: false, scale: 1, falc: false, hoverRead: false };
+  try {
+    const raw = localStorage.getItem(A11Y_PREFS_KEY);
+    if (raw) a11yPrefs = Object.assign(a11yPrefs, JSON.parse(raw));
+  } catch (e) {}
+  function saveA11yPrefs() {
+    try { localStorage.setItem(A11Y_PREFS_KEY, JSON.stringify(a11yPrefs)); } catch (e) {}
+  }
+  function applyA11yPrefs() {
+    document.body.classList.toggle('a11y-font', a11yPrefs.font);
+    document.body.classList.toggle('a11y-contrast', a11yPrefs.contrast);
+    document.body.classList.toggle('falc-mode', a11yPrefs.falc);
+    document.documentElement.style.setProperty('--a11y-scale', a11yPrefs.scale);
+    document.getElementById('a11yFontBtn').setAttribute('aria-pressed', a11yPrefs.font ? 'true' : 'false');
+    document.getElementById('a11yContrastBtn').setAttribute('aria-pressed', a11yPrefs.contrast ? 'true' : 'false');
+    document.getElementById('falcModeBtn').setAttribute('aria-pressed', a11yPrefs.falc ? 'true' : 'false');
+    document.getElementById('hoverReadBtn').setAttribute('aria-pressed', a11yPrefs.hoverRead ? 'true' : 'false');
+  }
+  document.getElementById('a11yFontBtn').addEventListener('click', () => {
+    a11yPrefs.font = !a11yPrefs.font;
+    applyA11yPrefs(); saveA11yPrefs();
+  });
+  document.getElementById('a11yContrastBtn').addEventListener('click', () => {
+    a11yPrefs.contrast = !a11yPrefs.contrast;
+    applyA11yPrefs(); saveA11yPrefs();
+  });
+  document.getElementById('falcModeBtn').addEventListener('click', () => {
+    a11yPrefs.falc = !a11yPrefs.falc;
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    applyA11yPrefs(); saveA11yPrefs();
+  });
+  document.getElementById('hoverReadBtn').addEventListener('click', () => {
+    a11yPrefs.hoverRead = !a11yPrefs.hoverRead;
+    if (!a11yPrefs.hoverRead && window.speechSynthesis) window.speechSynthesis.cancel();
+    applyA11yPrefs(); saveA11yPrefs();
+  });
+  document.getElementById('a11ySizeUp').addEventListener('click', () => {
+    a11yPrefs.scale = Math.min(1.6, Math.round((a11yPrefs.scale + 0.15) * 100) / 100);
+    applyA11yPrefs(); saveA11yPrefs();
+  });
+  document.getElementById('a11ySizeDown').addEventListener('click', () => {
+    a11yPrefs.scale = Math.max(0.85, Math.round((a11yPrefs.scale - 0.15) * 100) / 100);
+    applyA11yPrefs(); saveA11yPrefs();
+  });
+  document.getElementById('a11ySizeReset').addEventListener('click', () => {
+    a11yPrefs.scale = 1;
+    applyA11yPrefs(); saveA11yPrefs();
+  });
+  applyA11yPrefs();
+  // ---- barre d'accessibilite figee au defilement ----
+  // Elle reste atteignable a tout moment : un apprenant qui a besoin d'agrandir le texte
+  // ne doit pas avoir a remonter en haut de page pour le faire.
+  (function figerBarreA11y() {
+    const barre = document.getElementById('a11yBar');
+    const espace = document.getElementById('a11yBarEspace');
+    if (!barre || !espace) return;
+
+    let hauteurBarre = 0;
+    let positionDeclenchement = 0;
+
+    function mesurer() {
+      // mesure faite hors etat fige, sinon la position serait faussee
+      if (barre.classList.contains('figee')) return;
+      hauteurBarre = barre.offsetHeight;
+      positionDeclenchement = barre.getBoundingClientRect().top + window.scrollY;
+    }
+
+    function verifier() {
+      if (window.scrollY > positionDeclenchement) {
+        if (!barre.classList.contains('figee')) {
+          espace.style.height = hauteurBarre + 'px';
+          espace.classList.add('actif');
+          barre.classList.add('figee');
+        }
+      } else if (barre.classList.contains('figee')) {
+        barre.classList.remove('figee');
+        espace.classList.remove('actif');
+        mesurer();
+      }
+    }
+
+    mesurer();
+    window.addEventListener('scroll', verifier, { passive: true });
+    window.addEventListener('resize', () => {
+      // au redimensionnement, la barre change de hauteur : on remesure a froid
+      const etaitFigee = barre.classList.contains('figee');
+      barre.classList.remove('figee');
+      espace.classList.remove('actif');
+      mesurer();
+      if (etaitFigee) verifier();
+    });
+  })();
+
+  // ---- lecture au survol, sur l'integralite de la page ----
+  function getVisibleHoverText(el) {
+    const isFalc = document.body.classList.contains('falc-mode');
+    if (isFalc && el.closest('.falc-normal-content')) return '';
+    if (!isFalc && el.closest('.falc-simple-content')) return '';
+    if (el.tagName === 'SELECT') {
+      const selected = el.options[el.selectedIndex];
+      return (el.getAttribute('aria-label') ? el.getAttribute('aria-label') + ' : ' : '') + (selected ? selected.textContent.trim() : '');
+    }
+    if (el.matches('input, textarea')) {
+      return (el.getAttribute('aria-label') || el.placeholder || '').trim();
+    }
+    const clone = el.cloneNode(true);
+    clone.querySelectorAll(isFalc ? '.falc-normal-content' : '.falc-simple-content').forEach(n => n.remove());
+    clone.querySelectorAll('.tab-cta, .sources-block, [aria-hidden="true"], .sr-only').forEach(n => n.remove());
+    const texte = clone.textContent.replace(/\s+/g, ' ').trim();
+    return texte || (el.getAttribute('aria-label') || el.getAttribute('title') || '').trim();
+  }
+  const hoverReadSupported = 'speechSynthesis' in window;
+  function attachHoverRead(el) {
+    if (!hoverReadSupported || el.dataset.hoverReadAttached) return;
+    el.dataset.hoverReadAttached = '1';
+    el.addEventListener('mouseenter', () => {
+      if (!a11yPrefs.hoverRead) return;
+      window.speechSynthesis.cancel();
+      const text = getVisibleHoverText(el);
+      if (!text) return;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'fr-FR'; utter.rate = 0.95;
+      window.speechSynthesis.speak(utter);
+    });
+    el.addEventListener('mouseleave', () => { if (window.speechSynthesis) window.speechSynthesis.cancel(); });
+    el.addEventListener('focusin', () => { if (a11yPrefs.hoverRead) el.dispatchEvent(new Event('mouseenter')); });
+    el.addEventListener('focusout', () => { if (window.speechSynthesis) window.speechSynthesis.cancel(); });
+  }
+  const HOVER_READ_SELECTOR = 'h1, .panel-title, .lede, p, li, label, input, select, .tab-btn, .info-card, .how-step, .back-to-hub, .a11y-toggle-btn, .a11y-bar-label, .history-toggle, .history-empty, .hi-title, .hi-sub, .btn-reset, .btn-print, .tb-btn, .mode-btn, .lv-root, .lv-empty, #listViewToggle, .a11y-size-group button';
+  function attachHoverReadAll(root) {
+    (root || document).querySelectorAll(HOVER_READ_SELECTOR).forEach(attachHoverRead);
+  }
+  attachHoverReadAll();
+
+  const STORAGE_KEY = 'sketchnote-v1';
+  const HISTORY_KEY = 'sketchnote-history-v1';
+  const COLORS = ['#1F3864', '#C0392B', '#E0591F', '#B08D57', '#168F7F', '#2E8B57', '#8A5CB0', '#000000', '#F1C40F', '#2E86DE', '#E91E8C', '#8B5A2B', '#7F8C8D', '#FFFFFF'];
+  const BRUSHES = [3, 6, 10];
+  const ERASER_SIZES = [
+    { key: 'S', label: 'Petite', size: 26 },
+    { key: 'M', label: 'Moyenne', size: 50 },
+    { key: 'G', label: 'Grande', size: 90 },
+  ];
+  const DRAW_TOOLS = [
+    { key:'libre', label:'✏️ Libre' },
+    { key:'courbe', label:'〰️ Courbe' },
+    { key:'ligne', label:'／ Ligne' },
+    { key:'fleche', label:'↗ Flèche' },
+    { key:'rectangle', label:'▭ Rectangle' },
+    { key:'carre', label:'⬜ Carré' },
+    { key:'cercle', label:'○ Cercle' },
+    { key:'ellipse', label:'⬭ Ellipse' },
+    { key:'bombe', label:'💨 Bombe' },
+    { key:'surligneur', label:'🖍️ Surligneur' },
+    { key:'pot', label:'🪣 Pot' },
+    { key:'pipette', label:'💧 Pipette' },
+  ];
+  const LINE_STYLES = [
+    { key:'plein', label:'Plein' },
+    { key:'pointille', label:'Pointillé' },
+    { key:'tirets', label:'Tirets' },
+  ];
+  const SHAPE_FILL_TOOLS = ['rectangle', 'carre', 'cercle', 'ellipse'];
+  const LINE_STYLE_TOOLS = ['ligne', 'fleche', 'rectangle', 'carre', 'cercle', 'ellipse', 'courbe'];
+  const FONTS = [
+    { key:'arial', label:'Arial', css:"'Arial','Helvetica',sans-serif" },
+    { key:'verdana', label:'Verdana ♿', css:"'Verdana','Geneva',sans-serif", note:'Police recommandée pour l\u2019accessibilité (PSH) : lettres bien distinctes, espacement large.' },
+    { key:'georgia', label:'Georgia', css:"'Georgia','Times New Roman',serif" },
+    { key:'courier', label:'Courier New', css:"'Courier New','Consolas',monospace" },
+    { key:'comic', label:'Comic Sans MS', css:"'Comic Sans MS','Comic Sans',cursive" },
+    { key:'impact', label:'Impact', css:"'Impact','Arial Narrow',sans-serif" },
+    { key:'brush', label:'Brush Script', css:"'Brush Script MT',cursive" },
+    { key:'times', label:'Times New Roman', css:"'Times New Roman',Times,serif" },
+    { key:'trebuchet', label:'Trebuchet MS', css:"'Trebuchet MS','Lucida Sans Unicode','Lucida Grande',sans-serif" },
+    { key:'century', label:'Century Gothic', css:"'Century Gothic',Futura,Avantgarde,sans-serif" },
+    { key:'rockwell', label:'Rockwell', css:"Rockwell,Georgia,serif" },
+    { key:'segoeprint', label:'Segoe Print', css:"'Segoe Print','Bradley Hand','Comic Sans MS',cursive" },
+    { key:'palatino', label:'Palatino', css:"'Palatino Linotype','Book Antiqua',Palatino,'Times New Roman',serif" },
+  ];
+  const CUSTOM_FONTS_KEY = 'sketchnote-custom-fonts-v1';
+  const CUSTOM_FONT_MAX_BYTES = 3 * 1024 * 1024;
+  const CUSTOM_FONT_MAX_COUNT = 6;
+  let customFonts = [];
+  function loadCustomFonts() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_FONTS_KEY);
+      customFonts = raw ? JSON.parse(raw) : [];
+    } catch (e) { customFonts = []; }
+    customFonts.forEach(cf => registerFontFace(cf.key, cf.dataUrl));
+  }
+  function saveCustomFonts() {
+    try { localStorage.setItem(CUSTOM_FONTS_KEY, JSON.stringify(customFonts)); } catch (e) {}
+  }
+  function registerFontFace(family, dataUrl) {
+    try {
+      const face = new FontFace(family, `url(${dataUrl})`);
+      face.load().then(loaded => { document.fonts.add(loaded); renderSubtoolbar(); }).catch(() => {});
+    } catch (e) {}
+  }
+  function fontCss(key) {
+    const builtIn = FONTS.find(f => f.key === key);
+    if (builtIn) return builtIn.css;
+    const custom = customFonts.find(f => f.key === key);
+    if (custom) return `'${custom.key}', sans-serif`;
+    return FONTS[0].css;
+  }
+  const SHAPES = ['Courbe', 'Trait droit', 'Cercle', 'Escalier', 'Quadrillage', 'Arborescence', 'Colonnes', 'Chronologie', 'Zigzag', 'Pyramide', 'Roue', 'Bulles', 'Entonnoir', 'Aucune'];
+  const IMAGE_SIZES = [ { key:'S', label:'Petit', max:90 }, { key:'M', label:'Moyen', max:180 }, { key:'G', label:'Grand', max:320 } ];
+
+  // ---- banque d icones (SVG simples originaux, trait "stroke") ----
+  const ICONS = {
+    etoile: '<svg viewBox="0 0 40 40"><path d="M20 4 L24 15 L36 16 L27 24 L30 36 L20 29 L10 36 L13 24 L4 16 L16 15 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>',
+    flecheDroite: '<svg viewBox="0 0 40 40"><path d="M6 20 H32 M22 10 L34 20 L22 30" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    flecheHaut: '<svg viewBox="0 0 40 40"><path d="M20 34 V8 M10 18 L20 6 L30 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    bulle: '<svg viewBox="0 0 40 40"><path d="M6 8 H34 V26 H16 L10 33 V26 H6 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>',
+    exclamation: '<svg viewBox="0 0 40 40"><line x1="20" y1="6" x2="20" y2="24" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="20" cy="33" r="2.6" fill="currentColor"/></svg>',
+    question: '<svg viewBox="0 0 40 40"><path d="M13 14 Q13 6 20 6 Q28 6 28 13 Q28 19 21 21 V25" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><circle cx="21" cy="33" r="2.6" fill="currentColor"/></svg>',
+    check: '<svg viewBox="0 0 40 40"><path d="M6 21 L16 31 L34 9" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    croix: '<svg viewBox="0 0 40 40"><path d="M9 9 L31 31 M31 9 L9 31" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>',
+    ampoule: '<svg viewBox="0 0 40 40"><circle cx="20" cy="15" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M15 26 H25 M16 31 H24 M17 35 H23" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg>',
+    coeur: '<svg viewBox="0 0 40 40"><path d="M20 33 C4 22 6 8 16 8 C19 8 20 11 20 11 C20 11 21 8 24 8 C34 8 36 22 20 33 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>',
+    cible: '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="20" cy="20" r="8" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="20" cy="20" r="2.4" fill="currentColor"/></svg>',
+    eclair: '<svg viewBox="0 0 40 40"><path d="M22 4 L10 22 H18 L15 36 L31 16 H22 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>',
+    epingle: '<svg viewBox="0 0 40 40"><path d="M20 4 C13 4 8 9 8 16 C8 24 20 36 20 36 C20 36 32 24 32 16 C32 9 27 4 20 4 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><circle cx="20" cy="16" r="4" fill="currentColor"/></svg>',
+    horloge: '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 11 V20 L27 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    drapeau: '<svg viewBox="0 0 40 40"><line x1="9" y1="4" x2="9" y2="36" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M9 6 H31 L24 14 L31 22 H9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>',
+    cle: '<svg viewBox="0 0 40 40"><circle cx="12" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M17 19 L32 34 M26 28 L31 23 M29 31 L34 26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>',
+    personne: '<svg viewBox="0 0 40 40"><circle cx="20" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M8 34 C8 24 14 20 20 20 C26 20 32 24 32 34" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>',
+    cycle: '<svg viewBox="0 0 40 40"><path d="M30 12 A14 14 0 1 0 32 22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M24 6 L31 12 L24 17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    livre: '<svg viewBox="0 0 40 40"><path d="M20 10 C16 6 8 6 6 8 V32 C8 30 16 30 20 34 C24 30 32 30 34 32 V8 C32 6 24 6 20 10 Z" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round"/><line x1="20" y1="10" x2="20" y2="34" stroke="currentColor" stroke-width="2"/></svg>',
+    cadre: '<svg viewBox="0 0 40 40"><rect x="6" y="10" width="28" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>',
+    graphique: '<svg viewBox="0 0 40 40"><line x1="6" y1="34" x2="34" y2="34" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><rect x="9" y="22" width="6" height="12" fill="none" stroke="currentColor" stroke-width="2.3"/><rect x="17" y="14" width="6" height="20" fill="none" stroke="currentColor" stroke-width="2.3"/><rect x="25" y="8" width="6" height="26" fill="none" stroke="currentColor" stroke-width="2.3"/></svg>',
+    euro: '<svg viewBox="0 0 40 40"><path d="M27 12 C24 8 16 8 14 15 C12 20 12 20 14 25 C16 32 24 32 27 28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><line x1="6" y1="17" x2="22" y2="17" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/><line x1="6" y1="23" x2="20" y2="23" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg>',
+    balance: '<svg viewBox="0 0 40 40"><line x1="20" y1="6" x2="20" y2="32" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="9" y1="12" x2="31" y2="12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M9 12 L4 22 A6 5 0 0 0 14 22 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M31 12 L26 22 A6 5 0 0 0 36 22 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><line x1="14" y1="34" x2="26" y2="34" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    engrenage: '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="10" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="20" cy="20" r="3.5" fill="none" stroke="currentColor" stroke-width="2.2"/><line x1="20" y1="4" x2="20" y2="9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="20" y1="31" x2="20" y2="36" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="4" y1="20" x2="9" y2="20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="31" y1="20" x2="36" y2="20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="9" y1="9" x2="12.5" y2="12.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="27.5" y1="27.5" x2="31" y2="31" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="31" y1="9" x2="27.5" y2="12.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="12.5" y1="27.5" x2="9" y2="31" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    dossier: '<svg viewBox="0 0 40 40"><path d="M5 12 V32 H35 V14 H19 L16 10 H5 Z" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round"/></svg>',
+    ordinateur: '<svg viewBox="0 0 40 40"><rect x="7" y="8" width="26" height="17" rx="1.5" fill="none" stroke="currentColor" stroke-width="2.3"/><line x1="3" y1="31" x2="37" y2="31" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/><line x1="16" y1="25" x2="16" y2="31" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="24" y1="25" x2="24" y2="31" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    loupe: '<svg viewBox="0 0 40 40"><circle cx="17" cy="17" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="25" y1="25" x2="34" y2="34" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>',
+    maison: '<svg viewBox="0 0 40 40"><path d="M6 20 L20 7 L34 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 17 V33 H30 V17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><rect x="17" y="23" width="6" height="10" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+    globe: '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="2.4"/><ellipse cx="20" cy="20" rx="6" ry="14" fill="none" stroke="currentColor" stroke-width="2"/><line x1="6" y1="20" x2="34" y2="20" stroke="currentColor" stroke-width="2"/><path d="M9 13 H31" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 27 H31" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+    stop: '<svg viewBox="0 0 40 40"><path d="M20 6 L36 32 H4 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><line x1="20" y1="16" x2="20" y2="24" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="20" cy="28.5" r="1.8" fill="currentColor"/></svg>',
+    plus: '<svg viewBox="0 0 40 40"><line x1="20" y1="7" x2="20" y2="33" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><line x1="7" y1="20" x2="33" y2="20" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>',
+    sourire: '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="14.5" cy="16.5" r="1.8" fill="currentColor"/><circle cx="25.5" cy="16.5" r="1.8" fill="currentColor"/><path d="M13 24 Q20 30 27 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg>',
+    ruban: '<svg viewBox="0 0 40 40"><path d="M8 13 H30 V17 L36 20 L30 23 V27 H8 V23 L2 20 L8 17 Z" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round"/></svg>',
+    calendrier: '<svg viewBox="0 0 40 40"><rect x="6" y="9" width="28" height="24" rx="2" fill="none" stroke="currentColor" stroke-width="2.3"/><line x1="6" y1="16" x2="34" y2="16" stroke="currentColor" stroke-width="2.3"/><line x1="13" y1="5" x2="13" y2="12" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/><line x1="27" y1="5" x2="27" y2="12" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/><line x1="12" y1="22" x2="17" y2="22" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="23" y1="22" x2="28" y2="22" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="27" x2="17" y2="27" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    cadenas: '<svg viewBox="0 0 40 40"><rect x="9" y="18" width="22" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M13 18 V12 A7 7 0 0 1 27 12 V18" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="20" cy="25" r="2.2" fill="currentColor"/><line x1="20" y1="27" x2="20" y2="30" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    boussole: '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M25 14 L18 18 L15 26 L22 22 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="20" cy="20" r="1.6" fill="currentColor"/></svg>',
+    poignee: '<svg viewBox="0 0 40 40"><path d="M5 16 L14 16 L19 21 L24 16 L35 16 L35 20 L26 20 L21 25 L14 20 L5 20 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>',
+    medaille: '<svg viewBox="0 0 40 40"><circle cx="20" cy="24" r="9" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15 16 L11 6 L17 8 L20 4 L23 8 L29 6 L25 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M17 22 L19 20 L19 28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    sablier: '<svg viewBox="0 0 40 40"><path d="M11 6 H29 M11 34 H29" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M12 6 V12 L20 20 L28 12 V6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 34 V28 L20 20 L28 28 V34" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>',
+    micro: '<svg viewBox="0 0 40 40"><rect x="16" y="6" width="8" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="2.3"/><path d="M11 18 A9 9 0 0 0 29 18" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/><line x1="20" y1="27" x2="20" y2="33" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/><line x1="14" y1="33" x2="26" y2="33" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg>',
+    camera: '<svg viewBox="0 0 40 40"><rect x="5" y="12" width="30" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2.3"/><path d="M14 12 L17 8 H23 L26 12" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round"/><circle cx="20" cy="22" r="6.5" fill="none" stroke="currentColor" stroke-width="2.3"/></svg>',
+  };
+  const ICON_ORDER = ['etoile','flecheDroite','flecheHaut','bulle','exclamation','question','check','croix','ampoule','coeur','cible','eclair','epingle','horloge','drapeau','cle','personne','cycle','livre','cadre','graphique','euro','balance','engrenage','dossier','ordinateur','loupe','maison','globe','stop','plus','sourire','ruban','calendrier','cadenas','boussole','poignee','medaille','sablier','micro','camera'];
+  const ICON_LABELS = {
+    etoile:'Étoile', flecheDroite:'Flèche droite', flecheHaut:'Flèche haut', bulle:'Bulle de dialogue',
+    exclamation:'Exclamation', question:'Question', check:'Coche', croix:'Croix', ampoule:'Ampoule',
+    coeur:'Cœur', cible:'Cible', eclair:'Éclair', epingle:'Épingle', horloge:'Horloge', drapeau:'Drapeau',
+    cle:'Clé', personne:'Personne', cycle:'Cycle', livre:'Livre', cadre:'Cadre',
+    graphique:'Graphique', euro:'Euro', balance:'Balance', engrenage:'Engrenage', dossier:'Dossier',
+    ordinateur:'Ordinateur', loupe:'Loupe', maison:'Maison', globe:'Globe', stop:'Attention', plus:'Plus', sourire:'Sourire',
+    ruban:'Ruban / bannière', calendrier:'Calendrier', cadenas:'Cadenas', boussole:'Boussole', poignee:'Poignée de main',
+    medaille:'Médaille', sablier:'Sablier', micro:'Microphone', camera:'Appareil photo'
+  };
+  const EMOJIS = ['😀','😊','🤔','😮','😍','😢','😡','👍','👎','✅','❌','⚠️','💡','🔥','⭐','⚡','🎯','📌','💭','👀','❤️','🚀','🎉','💪','🙌','📚','📈','📉','💰','🌍','🕐','✏️','🤝','📅','🔒','🏆','⏳','🎓','📝','🧩','👥','📊'];
+  const CUSTOM_ICONS_KEY = 'sketchnote-custom-icons-v1';
+  const CUSTOM_ICON_MAX_BYTES = 500 * 1024;
+  const CUSTOM_ICON_MAX_COUNT = 20;
+  let customIcons = [];
+  function loadCustomIcons() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_ICONS_KEY);
+      customIcons = raw ? JSON.parse(raw) : [];
+    } catch (e) { customIcons = []; }
+  }
+  function saveCustomIcons() {
+    try { localStorage.setItem(CUSTOM_ICONS_KEY, JSON.stringify(customIcons)); } catch (e) {}
+  }
+  const CUSTOM_EMOJIS_KEY = 'sketchnote-custom-emojis-v1';
+  const CUSTOM_EMOJI_MAX_COUNT = 30;
+  let customEmojis = [];
+  function loadCustomEmojis() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_EMOJIS_KEY);
+      customEmojis = raw ? JSON.parse(raw) : [];
+    } catch (e) { customEmojis = []; }
+  }
+  function saveCustomEmojis() {
+    try { localStorage.setItem(CUSTOM_EMOJIS_KEY, JSON.stringify(customEmojis)); } catch (e) {}
+  }
+  function looksLikeEmoji(str) {
+    try { return /\p{Extended_Pictographic}/u.test(str); } catch (e) { return str.trim().length > 0; }
+  }
+
+  const matiereEl = document.getElementById('matiere');
+  const chapitreEl = document.getElementById('chapitre');
+  const sequenceCoursEl = document.getElementById('sequenceCours');
+  const titreEl = document.getElementById('titreSketch');
+  const titreStyleToggle = document.getElementById('titreStyleToggle');
+  const titreStylePanel = document.getElementById('titreStylePanel');
+  const modeRow = document.getElementById('modeRow');
+  const subtoolbar = document.getElementById('subtoolbar');
+  const boardWrap = document.getElementById('boardWrap');
+  const listViewToggle = document.getElementById('listViewToggle');
+  const listViewPanel = document.getElementById('listViewPanel');
+  const canvas = document.getElementById('drawCanvas');
+  const guideCanvas = document.getElementById('guideCanvas');
+  const previewCanvas = document.getElementById('previewCanvas');
+  const overlay = document.getElementById('boardOverlay');
+  const imageFileInput = document.getElementById('imageFileInput');
+  const audioFileInput = document.getElementById('audioFileInput');
+  const fontFileInput = document.getElementById('fontFileInput');
+  const iconFileInput = document.getElementById('iconFileInput');
+  const ctx = canvas.getContext('2d');
+  const gctx = guideCanvas.getContext('2d');
+  const pctx = previewCanvas.getContext('2d');
+  const saveIndicator = document.getElementById('saveIndicator');
+  const historyToggle = document.getElementById('historyToggle');
+  const historyPanel = document.getElementById('historyPanel');
+  const historyList = document.getElementById('historyList');
+  const historyEmpty = document.getElementById('historyEmpty');
+
+  let mode = 'dessiner'; // dessiner | texte | icones | formes | image
+  let drawColor = COLORS[0];
+  let customColor = '#9C5FBF';
+  let brushSize = BRUSHES[1];
+  let drawTool = 'libre';
+  let shapeFilled = false;
+  let lineStyle = 'plein';
+  let eraserSize = ERASER_SIZES[1].size;
+  let selectedIcon = ICON_ORDER[0];
+  let selectedFont = FONTS[0].key;
+  let titreColor = null;
+  let titreFontFamily = null;
+  let titreStyleOpen = false;
+  let fontUploadLoading = false;
+  let iconUploadLoading = false;
+  let iconSubMode = 'symboles'; // symboles | emoji
+  let selectedEmoji = EMOJIS[0];
+  let autreSubMode = 'lien'; // lien | audio
+  let linkUrl = '';
+  let linkLabel = '';
+  let pendingAudio = null; // { dataUrl, name }
+  let audioLoading = false;
+  const AUDIO_MAX_BYTES = 4 * 1024 * 1024;
+  let selectedShape = 'Courbe';
+  let showGuideInPrint = true;
+  let pendingImage = null; // { dataUrl, width, height } - image chargee, prete a etre placee
+  let imageLoading = false;
+  let selectedImageSize = 'M';
+  let placedEls = []; // {id, type:'icon'|'text'|'image', key/text/dataUrl, x, y, color}
+  let currentId = null;
+  let saveTimer = null;
+  let nextNum = 1;
+
+  function newId() { return 'e' + (nextNum++) + '_' + Math.random().toString(36).slice(2,7); }
+  function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+  // ---------- televersement d'image (redimensionnee cote client avant stockage) ----------
+  function loadAndResizeImage(file, maxDim, callback) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.naturalWidth || img.width, height = img.naturalHeight || img.height;
+        if (Math.max(width, height) > maxDim) {
+          const scale = maxDim / Math.max(width, height);
+          width = Math.round(width * scale); height = Math.round(height * scale);
+        }
+        try {
+          const tmp = document.createElement('canvas');
+          tmp.width = width; tmp.height = height;
+          const tctx = tmp.getContext('2d');
+          tctx.drawImage(img, 0, 0, width, height);
+          const isJpeg = file.type === 'image/jpeg' || file.type === 'image/jpg';
+          const dataUrl = isJpeg ? tmp.toDataURL('image/jpeg', 0.85) : tmp.toDataURL('image/png');
+          callback({ dataUrl, width, height });
+        } catch (err) { callback(null); }
+      };
+      img.onerror = () => callback(null);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => callback(null);
+    reader.readAsDataURL(file);
+  }
+
+  imageFileInput.addEventListener('change', () => {
+    const file = imageFileInput.files && imageFileInput.files[0];
+    imageFileInput.value = ''; // permet de reselectionner le meme fichier plus tard
+    if (!file) return;
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('Merci de choisir un fichier image (JPG, PNG...).');
+      return;
+    }
+    imageLoading = true;
+    renderSubtoolbar();
+    loadAndResizeImage(file, 700, (result) => {
+      imageLoading = false;
+      if (!result) {
+        alert('Impossible de charger cette image. Essayez un autre fichier.');
+        renderSubtoolbar();
+        return;
+      }
+      pendingImage = result;
+      renderSubtoolbar();
+    });
+  });
+
+  audioFileInput.addEventListener('change', () => {
+    const file = audioFileInput.files && audioFileInput.files[0];
+    audioFileInput.value = '';
+    if (!file) return;
+    if (!file.type || !file.type.startsWith('audio/')) {
+      alert('Merci de choisir un fichier audio (MP3, WAV...).');
+      return;
+    }
+    if (file.size > AUDIO_MAX_BYTES) {
+      alert('Ce fichier audio est trop volumineux (4 Mo maximum). Essayez un extrait plus court.');
+      return;
+    }
+    audioLoading = true;
+    renderSubtoolbar();
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      audioLoading = false;
+      pendingAudio = { dataUrl: e.target.result, name: file.name };
+      renderSubtoolbar();
+    };
+    reader.onerror = () => {
+      audioLoading = false;
+      alert('Impossible de charger ce fichier audio.');
+      renderSubtoolbar();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function sanitizeFontFamilyName(filename) {
+    const base = filename.replace(/\.[^.]+$/, '');
+    return base.replace(/[^a-zA-Z0-9 _-]/g, '').trim() || 'Police perso';
+  }
+  fontFileInput.addEventListener('change', () => {
+    const file = fontFileInput.files && fontFileInput.files[0];
+    fontFileInput.value = '';
+    if (!file) return;
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if (!['ttf', 'otf', 'woff', 'woff2'].includes(ext)) {
+      alert('Merci de choisir un fichier de police au format .ttf, .otf, .woff ou .woff2.');
+      return;
+    }
+    if (file.size > CUSTOM_FONT_MAX_BYTES) {
+      alert('Ce fichier de police est trop volumineux (3 Mo maximum).');
+      return;
+    }
+    if (customFonts.length >= CUSTOM_FONT_MAX_COUNT) {
+      alert('Vous avez déjà ajouté ' + CUSTOM_FONT_MAX_COUNT + ' polices personnalisées. Supprimez-en une avant d\'en ajouter une nouvelle.');
+      return;
+    }
+    fontUploadLoading = true;
+    renderSubtoolbar();
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      const baseName = sanitizeFontFamilyName(file.name);
+      const familyKey = 'custom-' + baseName.replace(/\s+/g, '-') + '-' + Date.now().toString(36);
+      try {
+        const face = new FontFace(familyKey, `url(${dataUrl})`);
+        face.load().then(loaded => {
+          document.fonts.add(loaded);
+          customFonts.push({ key: familyKey, label: baseName, dataUrl });
+          saveCustomFonts();
+          selectedFont = familyKey;
+          fontUploadLoading = false;
+          renderSubtoolbar();
+        }).catch(() => {
+          fontUploadLoading = false;
+          alert('Ce fichier ne semble pas être une police valide.');
+          renderSubtoolbar();
+        });
+      } catch (err) {
+        fontUploadLoading = false;
+        alert('Ce fichier ne semble pas être une police valide.');
+        renderSubtoolbar();
+      }
+    };
+    reader.onerror = () => {
+      fontUploadLoading = false;
+      alert('Impossible de charger ce fichier de police.');
+      renderSubtoolbar();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  iconFileInput.addEventListener('change', () => {
+    const file = iconFileInput.files && iconFileInput.files[0];
+    iconFileInput.value = '';
+    if (!file) return;
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if (!['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) {
+      alert('Merci de choisir une image au format .svg, .png, .jpg, .gif ou .webp.');
+      return;
+    }
+    if (file.size > CUSTOM_ICON_MAX_BYTES) {
+      alert('Ce fichier est trop volumineux (500 Ko maximum) — une icône doit rester un petit visuel simple.');
+      return;
+    }
+    if (customIcons.length >= CUSTOM_ICON_MAX_COUNT) {
+      alert('Vous avez déjà ajouté ' + CUSTOM_ICON_MAX_COUNT + ' icônes personnalisées. Supprimez-en une avant d\'en ajouter une nouvelle.');
+      return;
+    }
+    iconUploadLoading = true;
+    renderSubtoolbar();
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      iconUploadLoading = false;
+      const dataUrl = e.target.result;
+      const label = file.name.replace(/\.[^.]+$/, '') || 'Icône perso';
+      const iconKey = 'customicon-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      customIcons.push({ key: iconKey, label, dataUrl });
+      saveCustomIcons();
+      selectedIcon = iconKey;
+      renderSubtoolbar();
+    };
+    reader.onerror = () => {
+      iconUploadLoading = false;
+      alert('Impossible de charger ce fichier.');
+      renderSubtoolbar();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ---------- modes ----------
+  const MODES = [
+    { key: 'dessiner', label: '✏️ Dessiner' },
+    { key: 'gomme', label: '🧹 Gomme' },
+    { key: 'texte', label: '🔤 Texte' },
+    { key: 'icones', label: '🖼️ Icônes' },
+    { key: 'formes', label: '📐 Formes' },
+    { key: 'image', label: '📷 Image' },
+    { key: 'autre', label: '🔗 Autre' },
+  ];
+  MODES.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'mode-btn' + (m.key === mode ? ' active' : '');
+    btn.textContent = m.label;
+    btn.addEventListener('click', () => {
+      mode = m.key;
+      modeRow.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+      renderSubtoolbar();
+    });
+    modeRow.appendChild(btn);
+  });
+
+  function buildSwatchRow(getValue, setValue, onChange) {
+    getValue = getValue || (() => drawColor);
+    setValue = setValue || ((c) => { drawColor = c; });
+    onChange = onChange || renderSubtoolbar;
+    const currentVal = getValue();
+    const swRow = document.createElement('div');
+    swRow.className = 'swatch-row';
+    COLORS.forEach(c => {
+      const b = document.createElement('button');
+      const isSel = c === currentVal;
+      b.className = 'swatch' + (isSel ? ' selected' : '');
+      b.style.background = c;
+      if (c.toUpperCase() === '#FFFFFF') { b.style.border = '2px solid var(--track)'; }
+      b.setAttribute('aria-label', 'Couleur ' + c);
+      b.addEventListener('click', () => { setValue(c); onChange(); });
+      swRow.appendChild(b);
+    });
+    const isCustomSel = !COLORS.includes(currentVal);
+    const wrap = document.createElement('span');
+    wrap.className = 'custom-color-wrap' + (isCustomSel ? ' selected' : '');
+    const custom = document.createElement('input');
+    custom.type = 'color';
+    custom.className = 'swatch-custom';
+    custom.value = isCustomSel ? currentVal : customColor;
+    custom.setAttribute('aria-label', 'Couleur personnalisée : cliquez pour choisir n\u2019importe quelle couleur ou entrer un code couleur');
+    custom.title = 'Cliquez pour choisir n\u2019importe quelle couleur (code couleur)';
+    custom.addEventListener('input', (e) => {
+      customColor = e.target.value;
+      setValue(e.target.value);
+      onChange();
+    });
+    const plus = document.createElement('span');
+    plus.className = 'cc-plus';
+    plus.setAttribute('aria-hidden', 'true');
+    plus.textContent = '+';
+    const label = document.createElement('span');
+    label.className = 'cc-label';
+    label.textContent = 'Personnalisée';
+    wrap.appendChild(custom);
+    wrap.appendChild(plus);
+    wrap.appendChild(label);
+    swRow.appendChild(wrap);
+    return swRow;
+  }
+
+  function buildFontRows(getValue, setValue, onChange) {
+    onChange = onChange || renderSubtoolbar;
+    const frag = document.createDocumentFragment();
+    const fontRow = document.createElement('div');
+    fontRow.className = 'shape-row';
+    FONTS.forEach(f => {
+      const b = document.createElement('button');
+      b.className = 'shape-btn font-btn' + (f.key === getValue() ? ' selected' : '');
+      b.style.fontFamily = f.css;
+      b.textContent = f.label;
+      if (f.note) b.title = f.note;
+      b.addEventListener('click', () => { setValue(f.key); onChange(); });
+      fontRow.appendChild(b);
+    });
+    frag.appendChild(fontRow);
+
+    if (customFonts.length) {
+      const customFontRow = document.createElement('div');
+      customFontRow.className = 'shape-row';
+      customFonts.forEach(cf => {
+        const wrap = document.createElement('span');
+        wrap.style.cssText = 'position:relative; display:inline-flex;';
+        const b = document.createElement('button');
+        b.className = 'shape-btn font-btn' + (cf.key === getValue() ? ' selected' : '');
+        b.style.fontFamily = `'${cf.key}', sans-serif`;
+        b.style.paddingRight = '26px';
+        b.textContent = cf.label;
+        b.title = 'Police personnalisée ajoutée';
+        b.addEventListener('click', () => { setValue(cf.key); onChange(); });
+        const del = document.createElement('span');
+        del.textContent = '✕';
+        del.title = 'Retirer cette police personnalisée';
+        del.style.cssText = 'position:absolute; top:50%; right:6px; transform:translateY(-50%); font-size:11px; font-weight:800; color:var(--navy-soft); cursor:pointer; padding:2px;';
+        del.addEventListener('click', (e) => {
+          e.stopPropagation();
+          customFonts = customFonts.filter(x => x.key !== cf.key);
+          saveCustomFonts();
+          if (getValue() === cf.key) setValue(FONTS[0].key);
+          onChange();
+        });
+        wrap.appendChild(b);
+        wrap.appendChild(del);
+        customFontRow.appendChild(wrap);
+      });
+      frag.appendChild(customFontRow);
+    }
+    return frag;
+  }
+
+  function applyTitreStyle() {
+    titreEl.style.color = titreColor || '';
+    titreEl.style.fontFamily = titreFontFamily ? fontCss(titreFontFamily) : '';
+  }
+  function renderTitreStylePanel() {
+    titreStylePanel.innerHTML = '';
+    titreStylePanel.hidden = !titreStyleOpen;
+    titreStyleToggle.setAttribute('aria-expanded', titreStyleOpen ? 'true' : 'false');
+    if (!titreStyleOpen) return;
+
+    const hint = document.createElement('span');
+    hint.className = 'text-hint';
+    hint.textContent = 'Choisissez une couleur et une police pour le titre de votre sketchnote.';
+    titreStylePanel.appendChild(hint);
+
+    titreStylePanel.appendChild(buildSwatchRow(
+      () => titreColor || COLORS[0],
+      (c) => { titreColor = c; applyTitreStyle(); debouncedSaveState(); },
+      renderTitreStylePanel
+    ));
+    titreStylePanel.appendChild(buildFontRows(
+      () => titreFontFamily || FONTS[0].key,
+      (k) => { titreFontFamily = k; applyTitreStyle(); debouncedSaveState(); },
+      renderTitreStylePanel
+    ));
+
+    const resetStyleBtn = document.createElement('button');
+    resetStyleBtn.className = 'tb-mini-btn';
+    resetStyleBtn.textContent = '↺ Style par défaut';
+    resetStyleBtn.addEventListener('click', () => {
+      titreColor = null; titreFontFamily = null;
+      applyTitreStyle(); debouncedSaveState(); renderTitreStylePanel();
+    });
+    titreStylePanel.appendChild(resetStyleBtn);
+  }
+  titreStyleToggle.addEventListener('click', () => {
+    titreStyleOpen = !titreStyleOpen;
+    renderTitreStylePanel();
+  });
+
+  listViewToggle.addEventListener('click', () => {
+    listViewPanel.hidden = !listViewPanel.hidden;
+    listViewToggle.setAttribute('aria-expanded', listViewPanel.hidden ? 'false' : 'true');
+    renderListView();
+  });
+
+  function renderSubtoolbar() {
+    subtoolbar.innerHTML = '';
+    if (mode === 'dessiner') {
+      const toolRow = document.createElement('div');
+      toolRow.className = 'shape-row';
+      DRAW_TOOLS.forEach(t => {
+        const b = document.createElement('button');
+        b.className = 'shape-btn' + (t.key === drawTool ? ' selected' : '');
+        b.textContent = t.label;
+        b.addEventListener('click', () => { drawTool = t.key; renderSubtoolbar(); });
+        toolRow.appendChild(b);
+      });
+      subtoolbar.appendChild(toolRow);
+
+      if (drawTool !== 'pipette') {
+        subtoolbar.appendChild(buildSwatchRow());
+      }
+
+      if (drawTool !== 'pot' && drawTool !== 'pipette') {
+        const brRow = document.createElement('div');
+        brRow.className = 'brush-row';
+        brRow.innerHTML = '<span>Épaisseur</span>';
+        BRUSHES.forEach(sz => {
+          const b = document.createElement('button');
+          b.className = 'brush-btn' + (sz === brushSize ? ' selected' : '');
+          b.innerHTML = `<span class="dot" style="width:${sz+2}px; height:${sz+2}px;"></span>`;
+          b.setAttribute('aria-label', 'Épaisseur ' + sz + ' pixels');
+          b.addEventListener('click', () => { brushSize = sz; renderSubtoolbar(); });
+          brRow.appendChild(b);
+        });
+        subtoolbar.appendChild(brRow);
+      }
+
+      if (SHAPE_FILL_TOOLS.includes(drawTool)) {
+        const fillBtn = document.createElement('button');
+        fillBtn.className = 'tb-mini-btn' + (shapeFilled ? ' selected' : '');
+        fillBtn.textContent = shapeFilled ? '⬛ Rempli' : '⬜ Contour';
+        if (shapeFilled) { fillBtn.style.borderColor = 'var(--navy)'; fillBtn.style.color = 'var(--navy)'; }
+        fillBtn.addEventListener('click', () => { shapeFilled = !shapeFilled; renderSubtoolbar(); });
+        subtoolbar.appendChild(fillBtn);
+      }
+
+      if (LINE_STYLE_TOOLS.includes(drawTool)) {
+        const styleRow = document.createElement('div');
+        styleRow.className = 'shape-row';
+        LINE_STYLES.forEach(ls => {
+          const b = document.createElement('button');
+          b.className = 'shape-btn' + (ls.key === lineStyle ? ' selected' : '');
+          b.textContent = ls.label;
+          b.addEventListener('click', () => { lineStyle = ls.key; renderSubtoolbar(); });
+          styleRow.appendChild(b);
+        });
+        subtoolbar.appendChild(styleRow);
+      }
+
+      if (drawTool === 'pot') {
+        const hint = document.createElement('span');
+        hint.className = 'text-hint';
+        hint.textContent = 'Cliquez à l\'intérieur d\'une forme fermée pour la remplir de la couleur choisie.';
+        subtoolbar.appendChild(hint);
+      }
+      if (drawTool === 'pipette') {
+        const hint = document.createElement('span');
+        hint.className = 'text-hint';
+        hint.textContent = 'Cliquez sur une couleur déjà présente sur la feuille pour la reprendre.';
+        subtoolbar.appendChild(hint);
+      }
+
+    } else if (mode === 'gomme') {
+      const szRow = document.createElement('div');
+      szRow.className = 'brush-row';
+      szRow.innerHTML = '<span>Taille</span>';
+      ERASER_SIZES.forEach(es => {
+        const b = document.createElement('button');
+        b.className = 'brush-btn' + (es.size === eraserSize ? ' selected' : '');
+        const dotSize = 8 + (es.size / ERASER_SIZES[ERASER_SIZES.length - 1].size) * 14;
+        b.innerHTML = `<span class="dot" style="width:${dotSize}px; height:${dotSize}px; background:var(--track); border:2px solid var(--navy-soft);"></span>`;
+        b.setAttribute('aria-label', 'Gomme ' + es.label);
+        b.title = es.label;
+        b.addEventListener('click', () => { eraserSize = es.size; renderSubtoolbar(); });
+        szRow.appendChild(b);
+      });
+      subtoolbar.appendChild(szRow);
+      const hint = document.createElement('span');
+      hint.className = 'text-hint';
+      hint.textContent = 'Faites glisser sur la page pour effacer le dessin, les icônes, textes, images, liens ou audios sous la gomme.';
+      subtoolbar.appendChild(hint);
+
+    } else if (mode === 'texte') {
+      const hint0 = document.createElement('span');
+      hint0.className = 'text-hint';
+      hint0.textContent = 'Choisissez une couleur et une police puis cliquez sur la page pour ajouter un mot-clé.';
+      subtoolbar.appendChild(hint0);
+      subtoolbar.appendChild(buildSwatchRow());
+      subtoolbar.appendChild(buildFontRows(() => selectedFont, (k) => { selectedFont = k; }));
+
+      const fontUploadRow = document.createElement('div');
+      fontUploadRow.style.cssText = 'display:flex; align-items:center; gap:10px; flex-wrap:wrap;';
+      const fontUploadBtn = document.createElement('button');
+      fontUploadBtn.className = 'tb-mini-btn';
+      fontUploadBtn.style.color = 'var(--navy)';
+      fontUploadBtn.textContent = '📁 Ajouter une police…';
+      fontUploadBtn.addEventListener('click', () => fontFileInput.click());
+      fontUploadRow.appendChild(fontUploadBtn);
+      if (fontUploadLoading) {
+        const loadingHint = document.createElement('span');
+        loadingHint.className = 'text-hint';
+        loadingHint.textContent = '⏳ Chargement de la police...';
+        fontUploadRow.appendChild(loadingHint);
+      } else {
+        const uploadHint = document.createElement('span');
+        uploadHint.className = 'text-hint';
+        uploadHint.textContent = 'Fichier .ttf, .otf, .woff ou .woff2 (3 Mo max) — trouvable sur des sites de polices gratuites.';
+        fontUploadRow.appendChild(uploadHint);
+      }
+      subtoolbar.appendChild(fontUploadRow);
+
+    } else if (mode === 'icones') {
+      const subToggle = document.createElement('div');
+      subToggle.className = 'sub-toggle';
+      [['symboles','🖼️ Symboles'], ['emoji','😀 Émoticônes']].forEach(([key, label]) => {
+        const b = document.createElement('button');
+        b.className = key === iconSubMode ? 'active' : '';
+        b.textContent = label;
+        b.addEventListener('click', () => { iconSubMode = key; renderSubtoolbar(); });
+        subToggle.appendChild(b);
+      });
+      subtoolbar.appendChild(subToggle);
+
+      function makeCustomDelBtn(title, onDelete) {
+        const del = document.createElement('span');
+        del.textContent = '✕';
+        del.title = title;
+        del.setAttribute('role', 'button');
+        del.setAttribute('aria-label', title);
+        del.style.cssText = 'position:absolute; top:-6px; right:-6px; width:16px; height:16px; border-radius:50%; background:#C0392B; color:#FFFFFF; font-size:9px; font-weight:800; line-height:16px; text-align:center; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.25);';
+        del.addEventListener('click', (e) => { e.stopPropagation(); onDelete(); });
+        return del;
+      }
+
+      if (iconSubMode === 'symboles') {
+        const bank = document.createElement('div');
+        bank.className = 'icon-bank';
+        ICON_ORDER.forEach(key => {
+          const b = document.createElement('button');
+          b.className = 'icon-swatch' + (key === selectedIcon ? ' selected' : '');
+          b.innerHTML = ICONS[key];
+          b.style.color = drawColor;
+          b.setAttribute('aria-label', ICON_LABELS[key] || key);
+          b.addEventListener('click', () => { selectedIcon = key; renderSubtoolbar(); });
+          bank.appendChild(b);
+        });
+        customIcons.forEach(ci => {
+          const wrap = document.createElement('span');
+          wrap.style.cssText = 'position:relative; display:inline-flex;';
+          const b = document.createElement('button');
+          b.className = 'icon-swatch' + (ci.key === selectedIcon ? ' selected' : '');
+          b.innerHTML = `<img src="${ci.dataUrl}" alt="" style="width:100%;height:100%;object-fit:contain;pointer-events:none;">`;
+          b.setAttribute('aria-label', ci.label + ' (icône personnalisée)');
+          b.title = ci.label;
+          b.addEventListener('click', () => { selectedIcon = ci.key; renderSubtoolbar(); });
+          wrap.appendChild(b);
+          wrap.appendChild(makeCustomDelBtn('Retirer cette icône personnalisée', () => {
+            customIcons = customIcons.filter(x => x.key !== ci.key);
+            saveCustomIcons();
+            if (selectedIcon === ci.key) selectedIcon = ICON_ORDER[0];
+            renderSubtoolbar();
+          }));
+          bank.appendChild(wrap);
+        });
+        subtoolbar.appendChild(bank);
+        subtoolbar.appendChild(buildSwatchRow());
+
+        const iconUploadRow = document.createElement('div');
+        iconUploadRow.style.cssText = 'display:flex; align-items:center; gap:10px; flex-wrap:wrap; width:100%;';
+        const iconUploadBtn = document.createElement('button');
+        iconUploadBtn.className = 'tb-mini-btn';
+        iconUploadBtn.style.color = 'var(--navy)';
+        iconUploadBtn.textContent = '📁 Ajouter une icône…';
+        iconUploadBtn.addEventListener('click', () => iconFileInput.click());
+        iconUploadRow.appendChild(iconUploadBtn);
+        if (iconUploadLoading) {
+          const loadingHint = document.createElement('span');
+          loadingHint.className = 'text-hint';
+          loadingHint.textContent = '⏳ Chargement de l\'icône...';
+          iconUploadRow.appendChild(loadingHint);
+        } else {
+          const uploadHint = document.createElement('span');
+          uploadHint.className = 'text-hint';
+          uploadHint.textContent = 'Image .svg, .png, .jpg, .gif ou .webp (500 Ko max) — garde ses couleurs d\'origine, trouvable sur des sites d\'icônes gratuites.';
+          iconUploadRow.appendChild(uploadHint);
+        }
+        subtoolbar.appendChild(iconUploadRow);
+
+        const hint = document.createElement('span');
+        hint.className = 'text-hint';
+        hint.textContent = 'Cliquez sur la page pour placer l\'icône.';
+        subtoolbar.appendChild(hint);
+      } else {
+        const bank = document.createElement('div');
+        bank.className = 'emoji-bank';
+        EMOJIS.forEach(em => {
+          const b = document.createElement('button');
+          b.className = 'emoji-swatch' + (em === selectedEmoji ? ' selected' : '');
+          b.textContent = em;
+          b.setAttribute('aria-label', 'Émoticône ' + em);
+          b.addEventListener('click', () => { selectedEmoji = em; renderSubtoolbar(); });
+          bank.appendChild(b);
+        });
+        customEmojis.forEach(em => {
+          const wrap = document.createElement('span');
+          wrap.style.cssText = 'position:relative; display:inline-flex;';
+          const b = document.createElement('button');
+          b.className = 'emoji-swatch' + (em === selectedEmoji ? ' selected' : '');
+          b.textContent = em;
+          b.setAttribute('aria-label', 'Émoticône personnalisée ' + em);
+          b.addEventListener('click', () => { selectedEmoji = em; renderSubtoolbar(); });
+          wrap.appendChild(b);
+          wrap.appendChild(makeCustomDelBtn('Retirer cette émoticône', () => {
+            customEmojis = customEmojis.filter(x => x !== em);
+            saveCustomEmojis();
+            if (selectedEmoji === em) selectedEmoji = EMOJIS[0];
+            renderSubtoolbar();
+          }));
+          bank.appendChild(wrap);
+        });
+        subtoolbar.appendChild(bank);
+
+        const emojiAddRow = document.createElement('div');
+        emojiAddRow.style.cssText = 'display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%;';
+        const emojiInput = document.createElement('input');
+        emojiInput.type = 'text';
+        emojiInput.placeholder = 'Collez un émoji ici…';
+        emojiInput.maxLength = 8;
+        emojiInput.setAttribute('aria-label', 'Coller un nouvel émoji à ajouter à la banque');
+        emojiInput.style.cssText = 'font-family:inherit; font-size:16px; padding:7px 10px; border:2px solid var(--track); border-radius:10px; width:160px;';
+        const emojiAddBtn = document.createElement('button');
+        emojiAddBtn.className = 'tb-mini-btn';
+        emojiAddBtn.style.color = 'var(--navy)';
+        emojiAddBtn.textContent = '+ Ajouter';
+        function submitCustomEmoji() {
+          const val = emojiInput.value.trim();
+          if (!val) return;
+          if (!looksLikeEmoji(val)) { alert('Merci de coller un émoji valide (pas du texte).'); return; }
+          if (EMOJIS.includes(val) || customEmojis.includes(val)) {
+            alert('Cet émoji est déjà disponible dans la banque.');
+            emojiInput.value = '';
+            return;
+          }
+          if (customEmojis.length >= CUSTOM_EMOJI_MAX_COUNT) {
+            alert('Vous avez déjà ajouté ' + CUSTOM_EMOJI_MAX_COUNT + ' émoticônes personnalisées.');
+            return;
+          }
+          customEmojis.push(val);
+          saveCustomEmojis();
+          selectedEmoji = val;
+          emojiInput.value = '';
+          renderSubtoolbar();
+        }
+        emojiAddBtn.addEventListener('click', submitCustomEmoji);
+        emojiInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); submitCustomEmoji(); } });
+        emojiAddRow.appendChild(emojiInput);
+        emojiAddRow.appendChild(emojiAddBtn);
+        subtoolbar.appendChild(emojiAddRow);
+
+        const hint = document.createElement('span');
+        hint.className = 'text-hint';
+        hint.textContent = 'Cliquez sur la page pour placer l\'émoticône.';
+        subtoolbar.appendChild(hint);
+      }
+
+    } else if (mode === 'formes') {
+      const row = document.createElement('div');
+      row.className = 'shape-row';
+      SHAPES.forEach(s => {
+        const b = document.createElement('button');
+        b.className = 'shape-btn' + (s === selectedShape ? ' selected' : '');
+        b.textContent = s;
+        if (s === 'Aucune') {
+          b.style.marginLeft = '10px';
+          if (s !== selectedShape) { b.style.borderStyle = 'dashed'; }
+        }
+        b.addEventListener('click', () => { selectedShape = s; drawShapeGuide(); saveState(); renderSubtoolbar(); });
+        row.appendChild(b);
+      });
+      subtoolbar.appendChild(row);
+      const shapeHint = document.createElement('span');
+      shapeHint.className = 'text-hint';
+      shapeHint.textContent = 'Ce repère s\'affiche en fond de page pour vous aider à organiser votre sketchnote.';
+      subtoolbar.appendChild(shapeHint);
+
+      if (selectedShape !== 'Aucune') {
+        const toggle = document.createElement('label');
+        toggle.className = 'guide-print-toggle';
+        toggle.innerHTML = `<input type="checkbox" ${showGuideInPrint ? 'checked' : ''}> Afficher le repère à l'impression / PDF`;
+        toggle.querySelector('input').addEventListener('change', (e) => {
+          showGuideInPrint = e.target.checked;
+          applyGuidePrintPref();
+          saveState();
+        });
+        subtoolbar.appendChild(toggle);
+      }
+
+    } else if (mode === 'image') {
+      const chooseBtn = document.createElement('button');
+      chooseBtn.className = 'tb-mini-btn';
+      chooseBtn.style.color = 'var(--navy)';
+      chooseBtn.textContent = pendingImage ? '📁 Changer d\'image…' : '📁 Choisir une image…';
+      chooseBtn.addEventListener('click', () => imageFileInput.click());
+      subtoolbar.appendChild(chooseBtn);
+
+      if (imageLoading) {
+        const loadingHint = document.createElement('span');
+        loadingHint.className = 'text-hint';
+        loadingHint.textContent = '⏳ Chargement de l\'image...';
+        subtoolbar.appendChild(loadingHint);
+      } else if (pendingImage) {
+        const preview = document.createElement('img');
+        preview.src = pendingImage.dataUrl;
+        preview.alt = '';
+        preview.style.cssText = 'width:34px;height:34px;object-fit:cover;border-radius:8px;border:2px solid var(--track);flex-shrink:0;';
+        subtoolbar.appendChild(preview);
+
+        const sizeRow = document.createElement('div');
+        sizeRow.style.cssText = 'display:flex; align-items:center; gap:8px; flex-wrap:wrap;';
+        const label = document.createElement('span');
+        label.className = 'text-hint';
+        label.textContent = 'Taille :';
+        sizeRow.appendChild(label);
+        IMAGE_SIZES.forEach(opt => {
+          const b = document.createElement('button');
+          b.className = 'shape-btn' + (opt.key === selectedImageSize ? ' selected' : '');
+          b.textContent = opt.label;
+          b.addEventListener('click', () => { selectedImageSize = opt.key; renderSubtoolbar(); });
+          sizeRow.appendChild(b);
+        });
+        subtoolbar.appendChild(sizeRow);
+
+        const hint2 = document.createElement('span');
+        hint2.className = 'text-hint';
+        hint2.textContent = 'Cliquez sur la page pour placer l\'image.';
+        subtoolbar.appendChild(hint2);
+      } else {
+        const hint2 = document.createElement('span');
+        hint2.className = 'text-hint';
+        hint2.textContent = 'Choisissez une image pour commencer (JPG, PNG...).';
+        subtoolbar.appendChild(hint2);
+      }
+
+    } else if (mode === 'autre') {
+      const subToggle = document.createElement('div');
+      subToggle.className = 'sub-toggle';
+      [['lien', '🔗 Lien'], ['audio', '🎵 Audio']].forEach(([key, label]) => {
+        const b = document.createElement('button');
+        b.className = key === autreSubMode ? 'active' : '';
+        b.textContent = label;
+        b.addEventListener('click', () => { autreSubMode = key; renderSubtoolbar(); });
+        subToggle.appendChild(b);
+      });
+      subtoolbar.appendChild(subToggle);
+
+      if (autreSubMode === 'lien') {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex; flex-direction:column; gap:8px; width:100%;';
+        const urlInput = document.createElement('input');
+        urlInput.type = 'text';
+        urlInput.placeholder = 'https://...';
+        urlInput.value = linkUrl;
+        urlInput.setAttribute('aria-label', 'Adresse du lien');
+        urlInput.style.cssText = 'font-family:inherit; font-size:14px; padding:9px 12px; border:2px solid var(--track); border-radius:10px; width:100%;';
+        urlInput.addEventListener('input', (e) => { linkUrl = e.target.value; });
+        const labelInput = document.createElement('input');
+        labelInput.type = 'text';
+        labelInput.placeholder = 'Texte affiché (optionnel)';
+        labelInput.value = linkLabel;
+        labelInput.setAttribute('aria-label', 'Texte affiché du lien');
+        labelInput.style.cssText = 'font-family:inherit; font-size:14px; padding:9px 12px; border:2px solid var(--track); border-radius:10px; width:100%;';
+        labelInput.addEventListener('input', (e) => { linkLabel = e.target.value; });
+        wrap.appendChild(urlInput);
+        wrap.appendChild(labelInput);
+        subtoolbar.appendChild(wrap);
+        const hint = document.createElement('span');
+        hint.className = 'text-hint';
+        hint.textContent = 'Renseignez une adresse puis cliquez sur la page pour placer le lien.';
+        subtoolbar.appendChild(hint);
+      } else {
+        const chooseBtn = document.createElement('button');
+        chooseBtn.className = 'tb-mini-btn';
+        chooseBtn.style.color = 'var(--navy)';
+        chooseBtn.textContent = pendingAudio ? '📁 Changer de fichier audio…' : '📁 Choisir un fichier audio…';
+        chooseBtn.addEventListener('click', () => audioFileInput.click());
+        subtoolbar.appendChild(chooseBtn);
+
+        if (audioLoading) {
+          const loadingHint = document.createElement('span');
+          loadingHint.className = 'text-hint';
+          loadingHint.textContent = '⏳ Chargement de l\'audio...';
+          subtoolbar.appendChild(loadingHint);
+        } else if (pendingAudio) {
+          const preview = document.createElement('audio');
+          preview.controls = true;
+          preview.src = pendingAudio.dataUrl;
+          preview.style.cssText = 'height:32px; max-width:220px;';
+          subtoolbar.appendChild(preview);
+          const hint2 = document.createElement('span');
+          hint2.className = 'text-hint';
+          hint2.textContent = 'Cliquez sur la page pour placer l\'audio.';
+          subtoolbar.appendChild(hint2);
+        } else {
+          const hint2 = document.createElement('span');
+          hint2.className = 'text-hint';
+          hint2.textContent = 'Choisissez un fichier audio (MP3, WAV...) — 4 Mo maximum.';
+          subtoolbar.appendChild(hint2);
+        }
+      }
+    }
+  }
+
+  // ---------- preference d'affichage du repere dans la version imprimee/PDF ----------
+  function applyGuidePrintPref() {
+    document.body.classList.toggle('hide-guide-print', !showGuideInPrint);
+  }
+
+  // ---------- repere visuel de la forme choisie (fond de page, ne fait pas partie du dessin) ----------
+  function drawShapeGuide() {
+    const w = guideCanvas.width, h = guideCanvas.height;
+    gctx.clearRect(0, 0, w, h);
+    gctx.save();
+    gctx.strokeStyle = 'rgba(74, 92, 130, 0.38)';
+    gctx.lineWidth = 2.5;
+    gctx.lineCap = 'round';
+    gctx.lineJoin = 'round';
+    gctx.setLineDash([9, 8]);
+    if (selectedShape === 'Courbe') {
+      gctx.beginPath();
+      gctx.moveTo(50, h * 0.55);
+      gctx.bezierCurveTo(w * 0.28, h * 0.28, w * 0.42, h * 0.82, w * 0.60, h * 0.50);
+      gctx.bezierCurveTo(w * 0.74, h * 0.24, w * 0.86, h * 0.60, w - 50, h * 0.42);
+      gctx.stroke();
+    } else if (selectedShape === 'Cercle') {
+      gctx.beginPath();
+      gctx.arc(w / 2, h / 2, Math.min(w, h) / 2 - 45, 0, Math.PI * 2);
+      gctx.stroke();
+    } else if (selectedShape === 'Escalier') {
+      const steps = 5;
+      const stepW = (w - 100) / steps, stepH = (h - 110) / steps;
+      let x = 50, y = h - 55;
+      gctx.beginPath();
+      gctx.moveTo(x, y);
+      for (let i = 0; i < steps; i++) {
+        gctx.lineTo(x + stepW, y);
+        x += stepW;
+        gctx.lineTo(x, y - stepH);
+        y -= stepH;
+      }
+      gctx.stroke();
+    } else if (selectedShape === 'Quadrillage') {
+      const cols = 3, rows = 2;
+      gctx.beginPath();
+      for (let i = 1; i < cols; i++) {
+        const x = (w / cols) * i;
+        gctx.moveTo(x, 35); gctx.lineTo(x, h - 35);
+      }
+      for (let j = 1; j < rows; j++) {
+        const y = (h / rows) * j;
+        gctx.moveTo(35, y); gctx.lineTo(w - 35, y);
+      }
+      gctx.stroke();
+    } else if (selectedShape === 'Trait droit') {
+      gctx.beginPath();
+      gctx.moveTo(60, h / 2);
+      gctx.lineTo(w - 60, h / 2);
+      gctx.stroke();
+    } else if (selectedShape === 'Arborescence') {
+      gctx.beginPath();
+      gctx.moveTo(w * 0.5, h - 70); gctx.lineTo(w * 0.5, h * 0.42);
+      gctx.moveTo(w * 0.5, h * 0.42); gctx.lineTo(w * 0.22, h * 0.14);
+      gctx.moveTo(w * 0.5, h * 0.42); gctx.lineTo(w * 0.5, h * 0.10);
+      gctx.moveTo(w * 0.5, h * 0.42); gctx.lineTo(w * 0.78, h * 0.14);
+      gctx.moveTo(w * 0.36, h * 0.26); gctx.lineTo(w * 0.16, h * 0.30);
+      gctx.moveTo(w * 0.64, h * 0.26); gctx.lineTo(w * 0.84, h * 0.30);
+      gctx.stroke();
+    } else if (selectedShape === 'Colonnes') {
+      gctx.beginPath();
+      gctx.moveTo(w / 3, 40); gctx.lineTo(w / 3, h - 40);
+      gctx.moveTo(w * 2 / 3, 40); gctx.lineTo(w * 2 / 3, h - 40);
+      gctx.stroke();
+    } else if (selectedShape === 'Chronologie') {
+      const y = h * 0.55;
+      gctx.beginPath();
+      gctx.moveTo(60, y); gctx.lineTo(w - 60, y);
+      for (let i = 0; i < 5; i++) {
+        const x = 60 + (w - 120) * (i / 4);
+        gctx.moveTo(x, y - 24); gctx.lineTo(x, y + 24);
+      }
+      gctx.stroke();
+      gctx.save();
+      gctx.setLineDash([]);
+      gctx.fillStyle = 'rgba(74, 92, 130, 0.55)';
+      for (let i = 0; i < 5; i++) {
+        const x = 60 + (w - 120) * (i / 4);
+        gctx.beginPath(); gctx.arc(x, y, 8, 0, Math.PI * 2); gctx.fill();
+      }
+      gctx.restore();
+    } else if (selectedShape === 'Zigzag') {
+      const top = h * 0.18, bot = h * 0.82, n = 5;
+      gctx.beginPath();
+      gctx.moveTo(50, bot);
+      for (let i = 0; i < n; i++) {
+        const x = 50 + (w - 100) * ((i + 1) / n);
+        gctx.lineTo(x, i % 2 === 0 ? top : bot);
+      }
+      gctx.stroke();
+    } else if (selectedShape === 'Pyramide') {
+      gctx.beginPath();
+      gctx.moveTo(w / 2, 45); gctx.lineTo(w - 90, h - 55); gctx.lineTo(90, h - 55); gctx.closePath();
+      gctx.moveTo(w * 0.36, h * 0.58); gctx.lineTo(w * 0.64, h * 0.58);
+      gctx.moveTo(w * 0.44, h * 0.32); gctx.lineTo(w * 0.56, h * 0.32);
+      gctx.stroke();
+    } else if (selectedShape === 'Roue') {
+      const cx = w / 2, cy = h / 2, r = Math.min(w, h) / 2 - 45;
+      gctx.beginPath();
+      gctx.arc(cx, cy, r, 0, Math.PI * 2);
+      for (let i = 0; i < 5; i++) {
+        const a = (Math.PI * 2 / 5) * i - Math.PI / 2;
+        gctx.moveTo(cx, cy);
+        gctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+      }
+      gctx.stroke();
+    } else if (selectedShape === 'Bulles') {
+      const m = Math.min(w, h);
+      const circles = [
+        [0.26, 0.32, 0.15], [0.58, 0.20, 0.11], [0.74, 0.52, 0.17],
+        [0.30, 0.68, 0.12], [0.56, 0.80, 0.09],
+      ];
+      gctx.beginPath();
+      circles.forEach(([fx, fy, fr]) => {
+        const px = w * fx, py = h * fy, pr = m * fr;
+        gctx.moveTo(px + pr, py);
+        gctx.arc(px, py, pr, 0, Math.PI * 2);
+      });
+      gctx.stroke();
+    } else if (selectedShape === 'Entonnoir') {
+      gctx.beginPath();
+      gctx.moveTo(w * 0.14, h * 0.15);
+      gctx.lineTo(w * 0.86, h * 0.15);
+      gctx.lineTo(w * 0.56, h * 0.62);
+      gctx.lineTo(w * 0.56, h * 0.85);
+      gctx.lineTo(w * 0.44, h * 0.85);
+      gctx.lineTo(w * 0.44, h * 0.62);
+      gctx.closePath();
+      gctx.moveTo(w * 0.24, h * 0.34); gctx.lineTo(w * 0.76, h * 0.34);
+      gctx.moveTo(w * 0.33, h * 0.48); gctx.lineTo(w * 0.67, h * 0.48);
+      gctx.stroke();
+    }
+    // 'Aucune' : aucun trace, le repere reste vide
+    gctx.restore();
+  }
+
+  // ---------- annuler ----------
+  function pushUndo() {
+    let canvasData = '';
+    try { canvasData = canvas.toDataURL('image/png'); } catch (e) {}
+    undoStack.push({ canvasData, placedEls: JSON.parse(JSON.stringify(placedEls)) });
+    if (undoStack.length > UNDO_MAX) undoStack.shift();
+    updateUndoBtn();
+  }
+  function updateUndoBtn() {
+    const btn = document.getElementById('undoBtn');
+    if (btn) btn.disabled = undoStack.length === 0;
+  }
+  function performUndo() {
+    if (!undoStack.length) return;
+    const snap = undoStack.pop();
+    placedEls = snap.placedEls;
+    editingTextId = null;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (snap.canvasData) {
+      const img = new Image();
+      img.onload = () => { ctx.drawImage(img, 0, 0); saveState(); };
+      img.src = snap.canvasData;
+    } else {
+      saveState();
+    }
+    renderOverlay();
+    updateUndoBtn();
+  }
+
+  // ---------- dessin sur canvas ----------
+  let drawing = false, lastX = 0, lastY = 0, shapeStartX = 0, shapeStartY = 0;
+  let sprayTimer = null, sprayCurX = 0, sprayCurY = 0;
+  let undoStack = [];
+  const UNDO_MAX = 20;
+  function canvasPos(evt) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+    const cx = (evt.clientX - rect.left) * scaleX;
+    const cy = (evt.clientY - rect.top) * scaleY;
+    return { x: cx, y: cy };
+  }
+  function applyLineStyle(c, style, width) {
+    if (style === 'pointille') c.setLineDash([width * 0.6, width * 1.9]);
+    else if (style === 'tirets') c.setLineDash([width * 2.4, width * 1.5]);
+    else c.setLineDash([]);
+  }
+  function drawShapeOnCtx(c, tool, x1, y1, x2, y2, color, width, filled, style) {
+    c.save();
+    c.strokeStyle = color;
+    c.fillStyle = color;
+    c.lineWidth = width;
+    c.lineCap = 'round';
+    c.lineJoin = 'round';
+    applyLineStyle(c, style, width);
+    c.beginPath();
+    if (tool === 'ligne') {
+      c.moveTo(x1, y1); c.lineTo(x2, y2);
+    } else if (tool === 'fleche') {
+      c.moveTo(x1, y1); c.lineTo(x2, y2);
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const headLen = Math.max(16, width * 3.4);
+      c.moveTo(x2 - headLen * Math.cos(angle - Math.PI / 7), y2 - headLen * Math.sin(angle - Math.PI / 7));
+      c.lineTo(x2, y2);
+      c.lineTo(x2 - headLen * Math.cos(angle + Math.PI / 7), y2 - headLen * Math.sin(angle + Math.PI / 7));
+    } else if (tool === 'rectangle') {
+      c.rect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1));
+    } else if (tool === 'carre') {
+      const side = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
+      const sx = x2 >= x1 ? x1 : x1 - side;
+      const sy = y2 >= y1 ? y1 : y1 - side;
+      c.rect(sx, sy, side, side);
+    } else if (tool === 'cercle') {
+      const r = Math.hypot(x2 - x1, y2 - y1);
+      c.arc(x1, y1, r, 0, Math.PI * 2);
+    } else if (tool === 'ellipse') {
+      const cx2 = (x1 + x2) / 2, cy2 = (y1 + y2) / 2;
+      const rx = Math.abs(x2 - x1) / 2, ry = Math.abs(y2 - y1) / 2;
+      if (rx > 0 && ry > 0) c.ellipse(cx2, cy2, rx, ry, 0, 0, Math.PI * 2);
+    }
+    if (filled && SHAPE_FILL_TOOLS.includes(tool)) c.fill();
+    c.stroke();
+    c.restore();
+  }
+  function perpDist(px, py, ax, ay, bx, by) {
+    const dx = bx - ax, dy = by - ay;
+    const len2 = dx * dx + dy * dy;
+    if (len2 === 0) return Math.hypot(px - ax, py - ay);
+    let t = ((px - ax) * dx + (py - ay) * dy) / len2;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+  }
+  function drawCourbeOnCtx(c, path, x1, y1, x2, y2, color, width, style) {
+    let maxDist = -1, devPoint = { x: (x1 + x2) / 2, y: (y1 + y2) / 2 };
+    path.forEach(pt => {
+      const d = perpDist(pt.x, pt.y, x1, y1, x2, y2);
+      if (d > maxDist) { maxDist = d; devPoint = pt; }
+    });
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const ctrlX = 2 * devPoint.x - mx, ctrlY = 2 * devPoint.y - my;
+    c.save();
+    c.strokeStyle = color;
+    c.lineWidth = width;
+    c.lineCap = 'round';
+    applyLineStyle(c, style, width);
+    c.beginPath();
+    c.moveTo(x1, y1);
+    c.quadraticCurveTo(ctrlX, ctrlY, x2, y2);
+    c.stroke();
+    c.restore();
+  }
+  function sprayAt(x, y) {
+    const radius = brushSize * 3.2;
+    ctx.save();
+    ctx.fillStyle = drawColor;
+    for (let i = 0; i < 7; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const r = Math.random() * radius;
+      const px = x + Math.cos(angle) * r;
+      const py = y + Math.sin(angle) * r;
+      ctx.globalAlpha = 0.45 + Math.random() * 0.4;
+      ctx.beginPath();
+      ctx.arc(px, py, 0.9 + Math.random() * 1.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+  function hexToRgb(hex) {
+    return [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+  }
+  function floodFill(startX, startY, fillHex) {
+    const w = canvas.width, h = canvas.height;
+    startX = Math.round(startX); startY = Math.round(startY);
+    if (startX < 0 || startX >= w || startY < 0 || startY >= h) return;
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const data = imgData.data;
+    const startIdx = (startY * w + startX) * 4;
+    const sr = data[startIdx], sg = data[startIdx + 1], sb = data[startIdx + 2], sa = data[startIdx + 3];
+    const [fr, fg, fb] = hexToRgb(fillHex);
+    if (sr === fr && sg === fg && sb === fb && sa === 255) return;
+    const tolerance = 32, tol2 = tolerance * tolerance;
+    function matches(idx) {
+      const dr = data[idx] - sr, dg = data[idx + 1] - sg, db = data[idx + 2] - sb, da = data[idx + 3] - sa;
+      return (dr * dr + dg * dg + db * db + da * da) <= tol2;
+    }
+    const visited = new Uint8Array(w * h);
+    const stack = [startX, startY];
+    while (stack.length) {
+      const cy = stack.pop(), cx = stack.pop();
+      if (cx < 0 || cx >= w || cy < 0 || cy >= h) continue;
+      const vIdx = cy * w + cx;
+      if (visited[vIdx]) continue;
+      const idx = vIdx * 4;
+      if (!matches(idx)) continue;
+      visited[vIdx] = 1;
+      data[idx] = fr; data[idx + 1] = fg; data[idx + 2] = fb; data[idx + 3] = 255;
+      stack.push(cx + 1, cy, cx - 1, cy, cx, cy + 1, cx, cy - 1);
+    }
+    ctx.putImageData(imgData, 0, 0);
+  }
+  function eraseAt(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const canvasPerScreen = canvas.width / rect.width;
+    const cx = (clientX - rect.left) * canvasPerScreen;
+    const cy = (clientY - rect.top) * canvasPerScreen;
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(cx, cy, eraserSize / 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    const screenRadius = (eraserSize / 2) / canvasPerScreen;
+    const toRemove = [];
+    overlay.querySelectorAll('.placed-el').forEach(div => {
+      const r = div.getBoundingClientRect();
+      const closestX = Math.max(r.left, Math.min(clientX, r.right));
+      const closestY = Math.max(r.top, Math.min(clientY, r.bottom));
+      const dist = Math.hypot(clientX - closestX, clientY - closestY);
+      if (dist <= screenRadius) toRemove.push(div.dataset.id);
+    });
+    if (toRemove.length) {
+      placedEls = placedEls.filter(el => !toRemove.includes(el.id));
+      if (editingTextId && toRemove.includes(editingTextId)) editingTextId = null;
+      renderOverlay();
+    }
+  }
+  let curvePath = [];
+  boardWrap.addEventListener('pointerdown', (e) => {
+    if (mode === 'dessiner') {
+      if (e.target !== canvas && e.target !== overlay) return;
+      drawing = true;
+      const p = canvasPos(e);
+      lastX = p.x; lastY = p.y;
+      shapeStartX = p.x; shapeStartY = p.y;
+      if (drawTool === 'libre') {
+        pushUndo();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, brushSize / 2, 0, Math.PI * 2);
+        ctx.fillStyle = drawColor;
+        ctx.fill();
+      } else if (drawTool === 'bombe') {
+        pushUndo();
+        sprayCurX = p.x; sprayCurY = p.y;
+        sprayAt(p.x, p.y);
+        clearInterval(sprayTimer);
+        sprayTimer = setInterval(() => sprayAt(sprayCurX, sprayCurY), 45);
+      } else if (drawTool === 'surligneur') {
+        pushUndo();
+        ctx.save();
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.globalAlpha = 0.55;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, (brushSize * 3.5) / 2, 0, Math.PI * 2);
+        ctx.fillStyle = drawColor;
+        ctx.fill();
+        ctx.restore();
+      } else if (drawTool === 'courbe') {
+        pushUndo();
+        curvePath = [{ x: p.x, y: p.y }];
+      } else if (drawTool === 'pot') {
+        pushUndo();
+        floodFill(p.x, p.y, drawColor);
+        drawing = false;
+        saveState();
+      } else if (drawTool === 'pipette') {
+        const px = Math.round(Math.min(Math.max(p.x, 0), canvas.width - 1));
+        const py = Math.round(Math.min(Math.max(p.y, 0), canvas.height - 1));
+        const pixel = ctx.getImageData(px, py, 1, 1).data;
+        if (pixel[3] > 0) {
+          const hex = '#' + [pixel[0], pixel[1], pixel[2]].map(v => v.toString(16).padStart(2, '0')).join('');
+          drawColor = hex;
+          customColor = hex;
+        }
+        drawTool = 'libre';
+        drawing = false;
+        renderSubtoolbar();
+      } else {
+        pushUndo();
+      }
+      try { boardWrap.setPointerCapture(e.pointerId); } catch (err) {}
+    } else if (mode === 'texte') {
+      if (e.target.closest('.placed-el')) return;
+      const boardRect = overlay.getBoundingClientRect();
+      const x = e.clientX - boardRect.left, y = e.clientY - boardRect.top;
+      addTextEl(x, y, '');
+    } else if (mode === 'icones') {
+      if (e.target.closest('.placed-el')) return;
+      const boardRect = overlay.getBoundingClientRect();
+      const x = e.clientX - boardRect.left, y = e.clientY - boardRect.top;
+      if (iconSubMode === 'emoji') {
+        addEmojiEl(x, y, selectedEmoji);
+      } else if (ICONS[selectedIcon]) {
+        addIconEl(x, y, selectedIcon, drawColor);
+      } else {
+        const ci = customIcons.find(c => c.key === selectedIcon);
+        if (ci) addCustomIconEl(x, y, ci.dataUrl);
+      }
+    } else if (mode === 'image') {
+      if (!pendingImage || e.target.closest('.placed-el')) return;
+      const boardRect = overlay.getBoundingClientRect();
+      const x = e.clientX - boardRect.left, y = e.clientY - boardRect.top;
+      addImageEl(x, y, pendingImage, selectedImageSize);
+    } else if (mode === 'autre') {
+      if (e.target.closest('.placed-el')) return;
+      const boardRect = overlay.getBoundingClientRect();
+      const x = e.clientX - boardRect.left, y = e.clientY - boardRect.top;
+      if (autreSubMode === 'lien') {
+        if (!linkUrl.trim()) { alert('Merci de renseigner une adresse avant de placer le lien.'); return; }
+        addLinkEl(x, y, linkUrl.trim(), linkLabel.trim());
+      } else if (autreSubMode === 'audio') {
+        if (!pendingAudio) return;
+        addAudioEl(x, y, pendingAudio);
+      }
+    } else if (mode === 'gomme') {
+      drawing = true;
+      pushUndo();
+      eraseAt(e.clientX, e.clientY);
+      try { boardWrap.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+  });
+  boardWrap.addEventListener('pointermove', (e) => {
+    if (!drawing) return;
+    if (mode === 'gomme') {
+      eraseAt(e.clientX, e.clientY);
+      return;
+    }
+    if (mode !== 'dessiner') return;
+    const p = canvasPos(e);
+    if (drawTool === 'libre') {
+      ctx.strokeStyle = drawColor;
+      ctx.lineWidth = brushSize;
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      lastX = p.x; lastY = p.y;
+    } else if (drawTool === 'bombe') {
+      sprayCurX = p.x; sprayCurY = p.y;
+      sprayAt(p.x, p.y);
+    } else if (drawTool === 'surligneur') {
+      ctx.save();
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.globalAlpha = 0.55;
+      ctx.strokeStyle = drawColor;
+      ctx.lineWidth = brushSize * 3.5;
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ctx.restore();
+      lastX = p.x; lastY = p.y;
+    } else if (drawTool === 'courbe') {
+      curvePath.push({ x: p.x, y: p.y });
+      pctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+      drawShapeOnCtx(pctx, 'ligne', shapeStartX, shapeStartY, p.x, p.y, drawColor, brushSize, false, lineStyle);
+    } else if (drawTool === 'pot' || drawTool === 'pipette') {
+      // actions ponctuelles au clic, rien a faire pendant le deplacement
+    } else {
+      pctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+      drawShapeOnCtx(pctx, drawTool, shapeStartX, shapeStartY, p.x, p.y, drawColor, brushSize, shapeFilled, lineStyle);
+    }
+  });
+  function endDraw(e) {
+    if (!drawing) return;
+    drawing = false;
+    if (mode === 'gomme') {
+      saveState();
+      return;
+    }
+    if (drawTool === 'bombe') {
+      clearInterval(sprayTimer);
+      sprayTimer = null;
+    } else if (drawTool === 'courbe' && mode === 'dessiner') {
+      const p = canvasPos(e);
+      drawCourbeOnCtx(ctx, curvePath, shapeStartX, shapeStartY, p.x, p.y, drawColor, brushSize, lineStyle);
+      pctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+      curvePath = [];
+    } else if (mode === 'dessiner' && drawTool !== 'libre' && drawTool !== 'surligneur' && drawTool !== 'pot' && drawTool !== 'pipette') {
+      const p = canvasPos(e);
+      drawShapeOnCtx(ctx, drawTool, shapeStartX, shapeStartY, p.x, p.y, drawColor, brushSize, shapeFilled, lineStyle);
+      pctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+    }
+    saveState();
+  }
+  boardWrap.addEventListener('pointerup', endDraw);
+  boardWrap.addEventListener('pointerleave', endDraw);
+
+  // ---------- elements places (icones / texte), deplacables ----------
+  function addIconEl(x, y, key, color) {
+    pushUndo();
+    const el = { id: newId(), type: 'icon', key, x: x - 22, y: y - 22, color };
+    placedEls.push(el);
+    saveState();
+  }
+  function addCustomIconEl(x, y, dataUrl) {
+    pushUndo();
+    const el = { id: newId(), type: 'customicon', dataUrl, x: x - 22, y: y - 22, w: 44, h: 44, scale: 1, rotation: 0 };
+    placedEls.push(el);
+    saveState();
+  }
+  function addEmojiEl(x, y, char) {
+    pushUndo();
+    const el = { id: newId(), type: 'emoji', char, x: x - 20, y: y - 20 };
+    placedEls.push(el);
+    saveState();
+  }
+  function addImageEl(x, y, img, sizeKey) {
+    pushUndo();
+    const maxSide = (IMAGE_SIZES.find(s => s.key === sizeKey) || IMAGE_SIZES[1]).max;
+    let w = img.width, h = img.height;
+    const longest = Math.max(w, h);
+    if (longest > maxSide) {
+      const scale = maxSide / longest;
+      w = Math.round(w * scale); h = Math.round(h * scale);
+    }
+    const el = { id: newId(), type: 'image', dataUrl: img.dataUrl, x: x - w / 2, y: y - h / 2, w, h };
+    placedEls.push(el);
+    saveState();
+  }
+  function normalizeUrl(u) {
+    if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(u)) return 'https://' + u;
+    return u;
+  }
+  function addLinkEl(x, y, url, label) {
+    pushUndo();
+    const el = { id: newId(), type: 'link', url: normalizeUrl(url), label, x: x - 60, y: y - 17 };
+    placedEls.push(el);
+    saveState();
+  }
+  function addAudioEl(x, y, audio) {
+    pushUndo();
+    const el = { id: newId(), type: 'audio', dataUrl: audio.dataUrl, x: x - 115, y: y - 24 };
+    placedEls.push(el);
+    saveState();
+  }
+  function addTextEl(x, y, text) {
+    pushUndo();
+    const el = { id: newId(), type: 'text', text, x, y, color: drawColor, fontFamily: selectedFont };
+    placedEls.push(el);
+    editingTextId = el.id;
+    saveState();
+    setTimeout(() => {
+      const input = overlay.querySelector(`[data-id="${el.id}"] input`);
+      if (input) { input.focus(); input.select(); }
+    }, 30);
+  }
+
+  let editingTextId = null;
+
+  const RESIZABLE_TYPES = ['icon', 'emoji', 'text', 'customicon'];
+  const HANDLES_HTML = '<span class="rotate-handle" title="Faire pivoter">↻</span><span class="resize-handle" title="Redimensionner">⤡</span>';
+  function placedElAriaLabel(el) {
+    if (el.type === 'icon') return 'Icône : ' + (ICON_LABELS[el.key] || el.key);
+    if (el.type === 'customicon') return 'Icône personnalisée';
+    if (el.type === 'emoji') return 'Émoticône : ' + el.char;
+    if (el.type === 'image') return 'Image ajoutée';
+    if (el.type === 'link') return 'Lien : ' + (el.label || el.url);
+    if (el.type === 'audio') return 'Fichier audio ajouté';
+    return 'Texte : ' + (el.text || 'mot-clé');
+  }
+  // vue en liste (alternative textuelle aux elements places sur le canevas libre)
+  function renderListView() {
+    if (listViewPanel.hidden) return;
+    let html = '';
+    if (placedEls.length === 0) {
+      html += '<p class="lv-empty">Aucun élément ajouté pour le moment.</p>';
+    } else {
+      html += '<ol>';
+      placedEls.forEach(el => {
+        html += `<li>${escapeHtml(placedElAriaLabel(el))}</li>`;
+      });
+      html += '</ol>';
+    }
+    html += '<p class="lv-note">Le dessin réalisé à main levée (traits, formes, surlignage) n\'a pas d\'équivalent textuel ici : cette liste ne reprend que les icônes, émoticônes, textes, images, liens et fichiers audio ajoutés.</p>';
+    listViewPanel.innerHTML = html;
+    if (typeof attachHoverReadAll === 'function') attachHoverReadAll(listViewPanel);
+  }
+  function renderOverlay() {
+    overlay.innerHTML = '';
+    placedEls.forEach(el => {
+      const div = document.createElement('div');
+      const cls = el.type === 'icon' ? 'icon-el' : el.type === 'image' ? 'image-el' : el.type === 'emoji' ? 'emoji-el'
+        : el.type === 'customicon' ? 'image-el' : el.type === 'link' ? 'link-el' : el.type === 'audio' ? 'audio-el' : 'text-el';
+      div.className = 'placed-el ' + cls;
+      div.dataset.id = el.id;
+      if (el.id !== editingTextId) {
+        div.tabIndex = 0;
+        div.setAttribute('role', 'button');
+        div.setAttribute('aria-label', escapeHtml(placedElAriaLabel(el)));
+      }
+      div.style.left = el.x + 'px';
+      div.style.top = el.y + 'px';
+      div.style.color = el.color;
+      if (RESIZABLE_TYPES.includes(el.type) && el.id !== editingTextId) {
+        div.style.transform = `rotate(${el.rotation || 0}deg) scale(${el.scale || 1})`;
+      }
+      if (el.type === 'icon') {
+        div.innerHTML = ICONS[el.key] + '<span class="del-x" data-del="' + el.id + '">✕</span>' + HANDLES_HTML;
+      } else if (el.type === 'emoji') {
+        div.innerHTML = `<span style="pointer-events:none;">${el.char}</span><span class="del-x" data-del="${el.id}">✕</span>` + HANDLES_HTML;
+      } else if (el.type === 'customicon') {
+        div.style.width = el.w + 'px';
+        div.style.height = el.h + 'px';
+        div.innerHTML = `<img src="${el.dataUrl}" alt="Icône personnalisée ajoutée au sketchnote" draggable="false"><span class="del-x" data-del="${el.id}">✕</span>` + HANDLES_HTML;
+      } else if (el.type === 'image') {
+        div.style.width = el.w + 'px';
+        div.style.height = el.h + 'px';
+        div.innerHTML = `<img src="${el.dataUrl}" alt="Image ajoutée au sketchnote" draggable="false"><span class="del-x" data-del="${el.id}">✕</span>`;
+      } else if (el.type === 'link') {
+        const displayText = el.label || el.url.replace(/^https?:\/\//, '').slice(0, 28);
+        div.innerHTML = `<span class="link-display" style="pointer-events:none;">🔗 ${escapeHtml(displayText)}</span><a class="link-open" href="${escapeHtml(el.url)}" target="_blank" rel="noopener" title="Ouvrir le lien">↗</a><span class="del-x" data-del="${el.id}">✕</span>`;
+      } else if (el.type === 'audio') {
+        div.innerHTML = `<div class="audio-handle">🎵 Audio</div><audio controls src="${el.dataUrl}"></audio><span class="del-x" data-del="${el.id}">✕</span>`;
+      } else if (el.id === editingTextId) {
+        div.style.fontFamily = fontCss(el.fontFamily);
+        div.innerHTML = `<input type="text" value="${escapeHtml(el.text)}" placeholder="mot-clé" data-textid="${el.id}" style="color:${el.color};"><span class="del-x" data-del="${el.id}">✕</span>`;
+      } else {
+        div.style.fontFamily = fontCss(el.fontFamily);
+        div.innerHTML = `<span class="text-display">${escapeHtml(el.text || 'mot-clé')}</span><span class="edit-pencil" data-edit="${el.id}" title="Modifier le texte">✏️</span><span class="del-x" data-del="${el.id}">✕</span>` + HANDLES_HTML;
+      }
+      overlay.appendChild(div);
+    });
+
+    overlay.querySelectorAll('[data-del]').forEach(x => {
+      x.addEventListener('click', (e) => {
+        e.stopPropagation();
+        pushUndo();
+        placedEls = placedEls.filter(el => el.id !== x.dataset.del);
+        saveState();
+      });
+    });
+    overlay.querySelectorAll('input[data-textid]').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const el = placedEls.find(el => el.id === inp.dataset.textid);
+        if (el) el.text = inp.value;
+      });
+      inp.addEventListener('blur', () => { editingTextId = null; saveState(); });
+      inp.addEventListener('pointerdown', (e) => e.stopPropagation());
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') inp.blur(); });
+    });
+    overlay.querySelectorAll('[data-edit]').forEach(pencil => {
+      pencil.addEventListener('click', (e) => {
+        e.stopPropagation();
+        pushUndo();
+        editingTextId = pencil.dataset.edit;
+        renderOverlay();
+        const inp = overlay.querySelector(`input[data-textid="${editingTextId}"]`);
+        if (inp) { inp.focus(); inp.select(); }
+      });
+    });
+
+    // glisser-deposer simple
+    overlay.querySelectorAll('.placed-el').forEach(div => {
+      let dragging = false, offX = 0, offY = 0, moved = false;
+      div.addEventListener('pointerdown', (e) => {
+        if (mode === 'gomme') return;
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'AUDIO' || e.target.classList.contains('del-x') || e.target.classList.contains('edit-pencil') || e.target.classList.contains('link-open') || e.target.classList.contains('resize-handle') || e.target.classList.contains('rotate-handle')) return;
+        dragging = true; moved = false;
+        div.classList.add('dragging');
+        try { div.setPointerCapture(e.pointerId); } catch (err) {}
+        const r = div.getBoundingClientRect();
+        offX = e.clientX - r.left; offY = e.clientY - r.top;
+        e.stopPropagation();
+      });
+      div.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        if (!moved) pushUndo();
+        moved = true;
+        const boardRect = overlay.getBoundingClientRect();
+        const x = e.clientX - boardRect.left - offX;
+        const y = e.clientY - boardRect.top - offY;
+        div.style.left = x + 'px'; div.style.top = y + 'px';
+        e.stopPropagation();
+      });
+      function stopDrag(e) {
+        if (!dragging) return;
+        dragging = false;
+        div.classList.remove('dragging');
+        if (moved) {
+          const el = placedEls.find(el => el.id === div.dataset.id);
+          if (el) { el.x = parseFloat(div.style.left); el.y = parseFloat(div.style.top); }
+          saveState();
+        }
+      }
+      div.addEventListener('pointerup', stopDrag);
+      div.addEventListener('pointerleave', (e) => { if (dragging) stopDrag(e); });
+      div.addEventListener('keydown', (e) => {
+        if (e.target !== div) return; // ignorer les evenements remontant d'un enfant (input texte, audio...)
+        const el = placedEls.find(x => x.id === div.dataset.id);
+        if (!el) return;
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+          // alternative clavier au glisser-depose (WCAG 2.2 - 2.5.7 Dragging Movements)
+          e.preventDefault();
+          e.stopPropagation();
+          pushUndo();
+          const step = e.shiftKey ? 40 : 12;
+          let nx = el.x, ny = el.y;
+          if (e.key === 'ArrowUp') ny -= step;
+          else if (e.key === 'ArrowDown') ny += step;
+          else if (e.key === 'ArrowLeft') nx -= step;
+          else if (e.key === 'ArrowRight') nx += step;
+          el.x = nx; el.y = ny;
+          div.style.left = nx + 'px'; div.style.top = ny + 'px';
+          persistQuiet();
+        } else if (e.key === 'Delete' || e.key === 'Backspace') {
+          e.preventDefault();
+          e.stopPropagation();
+          pushUndo();
+          placedEls = placedEls.filter(x => x.id !== el.id);
+          saveState();
+        } else if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          e.stopPropagation();
+          if (el.type === 'text') {
+            pushUndo();
+            editingTextId = el.id;
+            renderOverlay();
+            const inp = overlay.querySelector(`input[data-textid="${el.id}"]`);
+            if (inp) { inp.focus(); inp.select(); }
+          } else if (el.type === 'link') {
+            window.open(el.url, '_blank', 'noopener');
+          }
+        }
+      });
+
+      // redimensionner (distance au centre, independant de la rotation en cours)
+      const resizeHandle = div.querySelector('.resize-handle');
+      if (resizeHandle) {
+        let resizing = false, startDist = 1, startScale = 1, pendingScale = 1;
+        resizeHandle.addEventListener('pointerdown', (e) => {
+          const el = placedEls.find(el => el.id === div.dataset.id);
+          if (!el) return;
+          pushUndo();
+          const r = div.getBoundingClientRect();
+          const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+          startDist = Math.max(1, Math.hypot(e.clientX - cx, e.clientY - cy));
+          startScale = el.scale || 1;
+          pendingScale = startScale;
+          resizing = true;
+          try { resizeHandle.setPointerCapture(e.pointerId); } catch (err) {}
+          e.stopPropagation();
+        });
+        resizeHandle.addEventListener('pointermove', (e) => {
+          if (!resizing) return;
+          const el = placedEls.find(el => el.id === div.dataset.id);
+          if (!el) return;
+          const r = div.getBoundingClientRect();
+          const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+          const curDist = Math.hypot(e.clientX - cx, e.clientY - cy);
+          pendingScale = Math.max(0.4, Math.min(4, startScale * (curDist / startDist)));
+          div.style.transform = `rotate(${el.rotation || 0}deg) scale(${pendingScale})`;
+          e.stopPropagation();
+        });
+        function stopResize(e) {
+          if (!resizing) return;
+          resizing = false;
+          const el = placedEls.find(el => el.id === div.dataset.id);
+          if (el) el.scale = pendingScale;
+          saveState();
+        }
+        resizeHandle.addEventListener('pointerup', stopResize);
+        resizeHandle.addEventListener('pointerleave', (e) => { if (resizing) stopResize(e); });
+      }
+
+      // pivoter (angle au centre ; la poignee est au repos en haut, donc angle 0 = -90 en atan2)
+      const rotateHandle = div.querySelector('.rotate-handle');
+      if (rotateHandle) {
+        let rotating = false, pendingRotation = 0;
+        rotateHandle.addEventListener('pointerdown', (e) => {
+          const el = placedEls.find(el => el.id === div.dataset.id);
+          if (!el) return;
+          pushUndo();
+          pendingRotation = el.rotation || 0;
+          rotating = true;
+          try { rotateHandle.setPointerCapture(e.pointerId); } catch (err) {}
+          e.stopPropagation();
+        });
+        rotateHandle.addEventListener('pointermove', (e) => {
+          if (!rotating) return;
+          const el = placedEls.find(el => el.id === div.dataset.id);
+          if (!el) return;
+          const r = div.getBoundingClientRect();
+          const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+          const angleDeg = Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI;
+          pendingRotation = angleDeg + 90;
+          div.style.transform = `rotate(${pendingRotation}deg) scale(${el.scale || 1})`;
+          e.stopPropagation();
+        });
+        function stopRotate(e) {
+          if (!rotating) return;
+          rotating = false;
+          const el = placedEls.find(el => el.id === div.dataset.id);
+          if (el) el.rotation = pendingRotation;
+          saveState();
+        }
+        rotateHandle.addEventListener('pointerup', stopRotate);
+        rotateHandle.addEventListener('pointerleave', (e) => { if (rotating) stopRotate(e); });
+      }
+    });
+    renderListView();
+  }
+
+  // ---------- historique ----------
+  function loadHistory() {
+    try { const raw = localStorage.getItem(HISTORY_KEY); if (raw) return JSON.parse(raw); } catch (e) {}
+    return [];
+  }
+  function saveHistory(arr) { try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr)); } catch (e) {} }
+
+  function renderHistory() {
+    const history = loadHistory();
+    historyToggle.textContent = `📚 Voir mes sketchnotes précédents (${history.length})`;
+    historyEmpty.style.display = history.length ? 'none' : 'block';
+    historyList.innerHTML = '';
+    history.forEach(entry => {
+      const el = document.createElement('div');
+      el.className = 'history-item';
+      const label = entry.titre || [entry.matiere, entry.chapitre].filter(Boolean).join(' — ') || '(sans titre)';
+      el.innerHTML = `
+        <div class="hi-main">
+          <div class="hi-title">${escapeHtml(label)}</div>
+          <div class="hi-sub">${(entry.placedEls||[]).length} élément(s)</div>
+        </div>
+        <button class="hi-del" aria-label="Supprimer ce sketchnote">✕</button>`;
+      el.querySelector('.hi-main').addEventListener('click', () => {
+        applyEntry(entry);
+        currentId = entry.id;
+        saveState();
+        historyPanel.classList.remove('open');
+      });
+      el.querySelector('.hi-del').addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        if (!confirm('Supprimer définitivement ce sketchnote de l\'historique ?')) return;
+        saveHistory(loadHistory().filter(e => e.id !== entry.id));
+        renderHistory();
+      });
+      historyList.appendChild(el);
+    });
+    if (typeof attachHoverReadAll === 'function') attachHoverReadAll(historyList);
+  }
+  historyToggle.addEventListener('click', () => historyPanel.classList.toggle('open'));
+
+  function applyEntry(entry) {
+    editingTextId = null;
+    undoStack = [];
+    updateUndoBtn();
+    matiereEl.value = entry.matiere || '';
+    chapitreEl.value = entry.chapitre || '';
+    sequenceCoursEl.value = entry.sequenceCours || '';
+    titreEl.value = entry.titre || '';
+    titreColor = entry.titreColor || null;
+    titreFontFamily = entry.titreFontFamily || null;
+    applyTitreStyle();
+    selectedShape = entry.selectedShape || 'Courbe';
+    showGuideInPrint = entry.showGuideInPrint !== false;
+    applyGuidePrintPref();
+    drawShapeGuide();
+    placedEls = entry.placedEls || [];
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (entry.canvasData) {
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 0, 0);
+      img.src = entry.canvasData;
+    }
+    renderOverlay();
+    renderSubtoolbar();
+  }
+
+  function showSaveIndicator(ok) {
+    ok = ok !== false;
+    saveIndicator.textContent = ok ? '✓ Enregistré' : '⚠ Non enregistré (mémoire pleine)';
+    saveIndicator.classList.toggle('save-error', !ok);
+    saveIndicator.classList.add('show');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => saveIndicator.classList.remove('show'), ok ? 1400 : 3400);
+  }
+
+  // journalise l'activite pour le systeme de badges partage (accueil_outils)
+  function logSketchnoteActivity(matiere, chapitre, elementsCount) {
+    try {
+      const raw = localStorage.getItem('accueil-activity-v1');
+      const activity = raw ? JSON.parse(raw) : [];
+      activity.push({ tool: 'sketchnote', matiere: matiere || '', chapitre: chapitre || '', depth: elementsCount || 0, colors: 0, createdAt: new Date().toISOString() });
+      localStorage.setItem('accueil-activity-v1', JSON.stringify(activity));
+    } catch (e) {}
+  }
+
+  function saveState() {
+    renderOverlay();
+    let canvasData = '';
+    try { canvasData = canvas.toDataURL('image/png'); } catch (e) {}
+    const state = {
+      currentId, matiere: matiereEl.value, chapitre: chapitreEl.value, sequenceCours: sequenceCoursEl.value,
+      titre: titreEl.value, titreColor, titreFontFamily, selectedShape, showGuideInPrint, placedEls, canvasData
+    };
+    let ok = true;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { ok = false; }
+    showSaveIndicator(ok);
+  }
+  // persiste sans reconstruire l'overlay : utilise pour les deplacements au clavier,
+  // pour ne jamais perdre le focus de l'element en cours de deplacement
+  function persistQuiet() {
+    let canvasData = '';
+    try { canvasData = canvas.toDataURL('image/png'); } catch (e) {}
+    const state = {
+      currentId, matiere: matiereEl.value, chapitre: chapitreEl.value, sequenceCours: sequenceCoursEl.value,
+      titre: titreEl.value, titreColor, titreFontFamily, selectedShape, showGuideInPrint, placedEls, canvasData
+    };
+    let ok = true;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { ok = false; }
+    showSaveIndicator(ok);
+    renderListView();
+  }
+
+  let textSaveTimer = null;
+  function debouncedSaveState() {
+    clearTimeout(textSaveTimer);
+    textSaveTimer = setTimeout(saveState, 400);
+  }
+  matiereEl.addEventListener('input', debouncedSaveState);
+  chapitreEl.addEventListener('input', debouncedSaveState);
+  sequenceCoursEl.addEventListener('input', debouncedSaveState);
+  titreEl.addEventListener('input', debouncedSaveState);
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    const hasContent = placedEls.length > 0 || titreEl.value.trim() || matiereEl.value.trim();
+    if (hasContent) {
+      if (!confirm('Archiver ce sketchnote dans l\'historique et repartir sur un nouveau ?')) return;
+      let canvasData = '';
+      try { canvasData = canvas.toDataURL('image/png'); } catch (e) {}
+      const history = loadHistory();
+      const id = currentId || ('a' + Date.now());
+      const entry = {
+        id, matiere: matiereEl.value, chapitre: chapitreEl.value, sequenceCours: sequenceCoursEl.value,
+        titre: titreEl.value, titreColor, titreFontFamily, selectedShape, showGuideInPrint, placedEls, canvasData
+      };
+      const idx = history.findIndex(e => e.id === id);
+      if (idx >= 0) history[idx] = entry; else history.unshift(entry);
+      saveHistory(history);
+      logSketchnoteActivity(entry.matiere, entry.chapitre, placedEls.length);
+      renderHistory();
+    }
+    matiereEl.value = ''; chapitreEl.value = ''; sequenceCoursEl.value = ''; titreEl.value = '';
+    titreColor = null; titreFontFamily = null;
+    applyTitreStyle();
+    selectedShape = 'Courbe';
+    showGuideInPrint = true;
+    applyGuidePrintPref();
+    drawShapeGuide();
+    placedEls = [];
+    currentId = null;
+    editingTextId = null;
+    undoStack = [];
+    updateUndoBtn();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    renderOverlay();
+    renderSubtoolbar();
+    saveState();
+  });
+
+  document.getElementById('clearAllBtn').addEventListener('click', () => {
+    if (!confirm('Tout effacer (dessin, icônes, textes et images) ? Les champs Matière/Chapitre/Titre restent inchangés.')) return;
+    pushUndo();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    placedEls = [];
+    editingTextId = null;
+    renderOverlay();
+    saveState();
+  });
+
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+  document.getElementById('undoBtn').addEventListener('click', () => performUndo());
+  document.addEventListener('keydown', (e) => {
+    const isUndoCombo = (e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z';
+    if (!isUndoCombo) return;
+    const panel = document.getElementById('panel-concevoir');
+    if (!panel.classList.contains('active')) return;
+    const tag = document.activeElement ? document.activeElement.tagName : '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    e.preventDefault();
+    performUndo();
+  });
+
+  // init
+  loadCustomFonts();
+  loadCustomIcons();
+  loadCustomEmojis();
+  renderSubtoolbar();
+  (function initState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        currentId = parsed.currentId || null;
+        matiereEl.value = parsed.matiere || '';
+        chapitreEl.value = parsed.chapitre || '';
+        sequenceCoursEl.value = parsed.sequenceCours || '';
+        titreEl.value = parsed.titre || '';
+        titreColor = parsed.titreColor || null;
+        titreFontFamily = parsed.titreFontFamily || null;
+        applyTitreStyle();
+        selectedShape = parsed.selectedShape || 'Courbe';
+        showGuideInPrint = parsed.showGuideInPrint !== false;
+        placedEls = parsed.placedEls || [];
+        if (parsed.canvasData) {
+          const img = new Image();
+          img.onload = () => ctx.drawImage(img, 0, 0);
+          img.src = parsed.canvasData;
+        }
+      }
+    } catch (e) {}
+  })();
+  applyGuidePrintPref();
+  drawShapeGuide();
+  renderOverlay();
+  renderHistory();
+  updateUndoBtn();
+})();
+</script>
+
+<script src="accueil-habitant.js" data-outil="sketchnote"></script>
+</body>
+</html>
